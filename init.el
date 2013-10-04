@@ -79,18 +79,24 @@
 ;; (set-face-foreground 'linum-relative-current-face nil)
 ;; (set-face-background 'linum-relative-current-face nil)
 
-;; APPEARENCE
+;; APPEARANCE
 
 ;; Set color-theme
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
-     (color-theme-initialize)     
-     (color-theme-sanityinc-tomorrow-night)
+     (color-theme-initialize)
+     ;; (color-theme-sanityinc-tomorrow-night)
      ;; (color-theme-sanityinc-tomorrow-bright)
      ;; (color-theme-sanityinc-tomorrow-blue)
      ;; (color-theme-sanityinc-tomorrow-eighties)
      ))
+
+(setq color-theme-is-global t)
+(add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
+(require 'color-theme-solarized)
+(setq solarized-termcolors 256)
+(color-theme-solarized-dark)
 
 (set-face-attribute 'default nil :height 120)
 (set-cursor-color 'white)
@@ -118,3 +124,6 @@
 ;; highlight trainling spaces, empty lines and etc
 ;; (setq whitespace-style '(face empty tabs lines-tail trailing))
 ;; (global-whitespace-mode t)
+
+;; INDENT
+(define-key global-map (kbd "RET") 'newline-and-indent)
