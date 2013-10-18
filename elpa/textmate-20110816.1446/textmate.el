@@ -130,7 +130,7 @@ by the project root.")
      (define-key map [(alt shift up)] 'textmate-column-up-with-select)
      (define-key map [(alt shift down)] 'textmate-column-down-with-select))
     ((featurep 'ns)  ;; Emacs.app
-     (define-key map [(super meta return)] 'textmate-next-line)
+     (define-key map [(super return)] 'textmate-next-line)
      (define-key map [(super meta t)] 'textmate-clear-cache)
      (define-key map [(super meta \])] 'align)
      (define-key map [(super meta \[)] 'indent-according-to-mode)
@@ -296,17 +296,17 @@ Symbols matching the text at point are put first in the completion list."
   "Uses your completing read to quickly jump to a file in a project."
   (interactive)
   (let ((root (textmate-project-root)))
-    (when (null root) 
+    (when (null root)
       (error "Can't find any .git directory"))
-    (find-file 
-     (concat 
+    (find-file
+     (concat
       (expand-file-name root) "/"
-      (textmate-completing-read 
+      (textmate-completing-read
        "Find file: "
        (mapcar
-	(lambda (e)
-	  (replace-regexp-in-string (textmate-project-root) "" e))
-	(textmate-cached-project-files (textmate-project-root))))))))
+  (lambda (e)
+    (replace-regexp-in-string (textmate-project-root) "" e))
+  (textmate-cached-project-files (textmate-project-root))))))))
 
 (defun textmate-clear-cache ()
   "Clears the project root and project files cache. Use after adding files."
