@@ -37,10 +37,10 @@
 
 ;; Vim-mode (Evil-mode)
 (require 'evil)
-;; (require 'evil-paredit)
+;(require 'evil-paredit)
 (evil-mode 1)
 (setq evil-default-cursor t)
-;;; esc quits
+;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
 (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
@@ -155,16 +155,13 @@
 ;; window navigation
 ;; use Apple+arrow_keys to move cursor around split panes
 ;(windmove-default-keybindings 'super)
-(global-set-key (kbd "<C-S-s-left>")  'windmove-left)
-(global-set-key (kbd "<C-S-s-right>") 'windmove-right)
-(global-set-key (kbd "<C-S-s-up>")    'windmove-up)
-(global-set-key (kbd "<C-S-s-down>")  'windmove-down)
+(global-set-key (kbd "<s-left>")  'windmove-left)
+(global-set-key (kbd "<s-right>") 'windmove-right)
+(global-set-key (kbd "<s-up>")    'windmove-up)
+(global-set-key (kbd "<s-down>")  'windmove-down)
 
-;; Navigation
-(global-set-key (kbd "<s-left>") 'move-beginning-of-line)
-(global-set-key (kbd "<s-right>") 'move-end-of-line)
-(global-set-key (kbd "<s-up>") 'beginning-of-buffer)
-(global-set-key (kbd "<s-down>") 'end-of-buffer)
+;; comment region
+(global-set-key (kbd "C-c ;") 'comment-region)
 
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
@@ -177,8 +174,9 @@
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
 ; TODO: add to nrepl-interaction-mode-map
+(define-key global-map [f4] 'nrepl)
 (define-key global-map [f5] 'nrepl-load-current-buffer)
-(define-key global-map [f6] 'nrepl)
+(define-key global-map [f6] 'find-tag)
 (define-key global-map [f7] 'nrepl-set-ns)
 
 ; Switch to prev buffer
