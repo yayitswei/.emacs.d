@@ -37,6 +37,7 @@
 
 ;; Vim-mode (Evil-mode)
 (require 'evil)
+(require 'goto-last-change)
 ;(require 'evil-paredit)
 (evil-mode 1)
 (setq evil-default-cursor t)
@@ -185,3 +186,11 @@
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
 (global-set-key (kbd "C-c b") 'switch-to-previous-buffer)
+
+;; add clipboard to kill ring
+;; http://stackoverflow.com/questions/848936/how-to-preserve-clipboard-content-in-emacs-on-windows
+(defadvice kill-new (before kill-new-push-xselection-on-kill-ring activate)
+  "Before putting new kill onto the kill-ring, add the clipboard/external selection to the kill ring"
+  (let ((have-paste (and interprogram-paste-function
+                         (funcall interprogram-paste-function))))
+    (when have-paste (push have-paste kill-ring))))
