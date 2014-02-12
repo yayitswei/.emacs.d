@@ -12,6 +12,8 @@
  '(tool-bar-mode nil)
  '(scroll-bar-mode nil))
 
+(setq default-directory "/Users/wei/code/cr")
+
 (global-auto-revert-mode 1)
 
 ;; Fix the PATH variable
@@ -20,7 +22,12 @@
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
-(when window-system (set-exec-path-from-shell-PATH))
+(when window-system
+  (set-exec-path-from-shell-PATH)
+  (global-unset-key "\C-z"))
+
+(require 'bs)
+(global-set-key (kbd "C-x C-b") 'bs-show)
 
 ;; Package.el customization
 (package-initialize)
@@ -29,6 +36,11 @@
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
+
+;; Visual bell
+;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
+(require 'rwd-bell)
+(setq visible-bell t)
 
 ;; PLUGINS
 
@@ -109,7 +121,20 @@
 (add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
 (require 'color-theme-solarized)
 (setq solarized-termcolors 256)
-(color-theme-solarized-dark)
+;(color-theme-solarized-dark)
+(color-theme-solarized-light)
+
+(defun toggle-night-color-theme ()
+  "Switch to/from night color scheme."
+  (interactive)
+  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
+      (color-theme-snapshot) ; restore default (light) colors
+    ;; create the snapshot if necessary
+    (when (not (commandp 'color-theme-snapshot))
+      (fset 'color-theme-snapshot (color-theme-make-snapshot)))
+    (color-theme-solarized-dark)))
+(global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
+
 
 (set-face-attribute 'default nil :height 120)
 (set-cursor-color 'white)
@@ -175,10 +200,12 @@
 (add-to-list 'same-window-buffer-names "*nrepl*")
 
 ; TODO: add to nrepl-interaction-mode-map
+(define-key global-map [f3] 'nrepl-set-ns)
 (define-key global-map [f4] 'nrepl)
 (define-key global-map [f5] 'nrepl-load-current-buffer)
 (define-key global-map [f6] 'find-tag)
 (define-key global-map [f7] 'nrepl-set-ns)
+(define-key global-map [f8] 'slamhound)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
@@ -194,3 +221,8 @@
   (let ((have-paste (and interprogram-paste-function
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
+
+(defcustom nrepl-port "7888"
+   "The default port to connect to."
+   :type 'string
+   :group 'nrepl)

@@ -85,7 +85,7 @@
    :type 'string
    :group 'nrepl)
 
-(defcustom nrepl-port nil
+(defcustom nrepl-port "7888"
    "The default port to connect to."
    :type 'string
    :group 'nrepl)
@@ -1211,7 +1211,7 @@ This function is meant to be used in hooks to avoid lambda
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "g") 'nrepl-macroexpand-again)
     (define-key map (kbd "q") 'nrepl-popup-buffer-quit-function)
-    (flet ((redefine-key (from to)
+    (cl-flet ((redefine-key (from to)
                          (dolist (mapping (where-is-internal from nrepl-interaction-mode-map))
                            (define-key map mapping to))))
       (redefine-key 'nrepl-macroexpand-1 'nrepl-macroexpand-1-inplace)

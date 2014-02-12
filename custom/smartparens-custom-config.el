@@ -68,6 +68,8 @@
 
 (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
 
+(define-key sp-keymap (kbd "C-(") 'sp---wrap-with-40)
+
 ;;; markdown-mode
 (sp-with-modes '(markdown-mode gfm-mode rst-mode)
   (sp-local-pair "*" "*" :bind "C-*")
