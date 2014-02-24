@@ -34,6 +34,9 @@
 (add-to-list 'package-archives
   '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
 (add-to-list 'load-path "~/.emacs.d/custom")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
