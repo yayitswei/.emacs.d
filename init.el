@@ -34,8 +34,9 @@
 (add-to-list 'package-archives
   '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
-(when (not package-archive-contents)
-  (package-refresh-contents))
+; too slow
+;(when (not package-archive-contents)
+;  (package-refresh-contents))
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
@@ -67,8 +68,16 @@
 (global-set-key (kbd "C-u") 'scroll-down-command)
 
 ;; Textmate mode
-(require 'textmate)
-(textmate-mode)
+;; too slow, too many features I don't need
+;(require 'textmate)
+;(textmate-mode)
+
+;; faster command-t search
+(add-to-list 'load-path "~/.emacs.d/elpa/helm-20140223.1212")
+(require 'helm-config)
+(add-to-list 'load-path "~/.emacs.d/checkouts/helm-cmd-t")
+(require 'helm-cmd-t)
+(global-set-key (kbd "s-t") 'helm-cmd-t)
 
 ;; Highlight-parentheses
 (require 'highlight-parentheses)
