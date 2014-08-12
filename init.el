@@ -7,18 +7,28 @@
  '(backup-inhibited t t)
  '(column-number-mode t)
  '(delete-selection-mode t)
+ '(helm-cmd-t-cache-threshhold nil)
+ '(hl-paren-colors
+   (quote
+    ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
- '(tool-bar-mode nil)
- '(scroll-bar-mode nil))
+ '(scroll-bar-mode nil)
+ '(tool-bar-mode nil))
 
 (setq default-directory "/Users/wei/code/cr")
 
 (global-auto-revert-mode 1)
 
 ;; Fix the PATH variable
+;(defun set-exec-path-from-shell-PATH ()
+;  (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
+;    (setenv "PATH" path-from-shell)
+;    (setq exec-path (split-string path-from-shell path-separator))))
+
 (defun set-exec-path-from-shell-PATH ()
-  (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
@@ -78,6 +88,11 @@
 (add-to-list 'load-path "~/.emacs.d/checkouts/helm-cmd-t")
 (require 'helm-cmd-t)
 (global-set-key (kbd "s-t") 'helm-cmd-t)
+(require 'helm-C-x-b)
+(global-set-key [remap switch-to-buffer] 'helm-C-x-b)
+(global-set-key (kbd "s-b") 'helm-C-x-b)
+(global-set-key (kbd "s-F") 'helm-cmd-t-git-grep)
+
 
 ;; Highlight-parentheses
 (require 'highlight-parentheses)
@@ -93,10 +108,7 @@
 ;; Night Rainbow
 ;; (custom-set-variables '(hl-paren-colors (quote ("#cc6666" "#de935f" "#f0c674" "#b5bd68" "#8abeb7" "#81a2be" "#b294bb"))))
 ;; Bright Rainbow
-(custom-set-variables
- '(hl-paren-colors
-   (quote
-    ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8"))))
+
 
 (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
 
@@ -217,12 +229,14 @@
 (add-hook 'cider-mode-hook 'smartparens-strict-mode)
 
 ; TODO: add to nrepl-interaction-mode-map
+(define-key global-map [f2] 'find-tag)
 (define-key global-map [f3] 'cider-repl-set-ns)
 (define-key global-map [f4] 'cider)
 (define-key global-map [f5] 'cider-load-current-buffer)
-(define-key global-map [f6] 'find-tag)
+;(define-key global-map [f6] 'find-tag)
 (define-key global-map [f7] 'cider-set-ns)
 (define-key global-map [f8] 'slamhound)
+(define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
@@ -248,3 +262,14 @@
    "The default port to connect to."
    :type 'string
    :group 'nrepl)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; indents
+
+(setq js-indent-level 2)
+(setq css-indent-offset 2)
