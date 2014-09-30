@@ -41,8 +41,13 @@
 
 ;; Package.el customization
 (package-initialize)
-(add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(setq package-check-signature nil)
+
+;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
 
 ; too slow
 ;(when (not package-archive-contents)
@@ -115,6 +120,7 @@
 ;; cider (was nrepl)
 
 (unless (package-installed-p 'cider)
+  (package-refresh-contents)
   (package-install 'cider))
 
 (unless (package-installed-p 'clojure-mode)
