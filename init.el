@@ -42,9 +42,7 @@
 ;; Package.el customization
 (package-initialize)
 
-(setq package-check-signature nil)
-
-;(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
@@ -82,6 +80,9 @@
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (global-set-key (kbd "C-u") 'scroll-down-command)
 
+;; evil nerd commenter
+(evilnc-default-hotkeys)
+
 ;; Textmate mode
 ;; too slow, too many features I don't need
 ;(require 'textmate)
@@ -118,6 +119,8 @@
 (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
 
 ;; cider (was nrepl)
+
+(defvar clojure--prettify-symbols-alist nil)
 
 (unless (package-installed-p 'cider)
   (package-refresh-contents)
@@ -161,18 +164,18 @@
 (add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
 (require 'color-theme-solarized)
 (setq solarized-termcolors 256)
-;(color-theme-solarized-dark)
-(color-theme-solarized-light)
+(color-theme-solarized-dark)
+;(color-theme-solarized-light)
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
   (interactive)
-  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
+  (if (eq (frame-parameter (next-frame) 'background-mode) 'light)
       (color-theme-snapshot) ; restore default (light) colors
     ;; create the snapshot if necessary
     (when (not (commandp 'color-theme-snapshot))
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
-    (color-theme-solarized-dark)))
+    (color-theme-solarized-light)))
 (global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
 
 
@@ -237,7 +240,7 @@
 ; TODO: add to nrepl-interaction-mode-map
 (define-key global-map [f2] 'find-tag)
 (define-key global-map [f3] 'cider-repl-set-ns)
-(define-key global-map [f4] 'cider)
+(define-key global-map [f4] 'cider-connect)
 (define-key global-map [f5] 'cider-load-current-buffer)
 ;(define-key global-map [f6] 'find-tag)
 (define-key global-map [f7] 'cider-set-ns)
