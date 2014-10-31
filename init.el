@@ -239,13 +239,20 @@
 
 ; TODO: add to nrepl-interaction-mode-map
 (define-key global-map [f2] 'find-tag)
-(define-key global-map [f3] 'cider-repl-set-ns)
-(define-key global-map [f4] 'cider-connect)
-(define-key global-map [f5] 'cider-load-current-buffer)
+(define-key global-map [f4] 'monroe)
+
+;(define-key global-map [f3] 'cider-repl-set-ns)
+;(define-key global-map [f4] 'cider-connect)
+;(define-key global-map [f5] 'cider-load-current-buffer)
 ;(define-key global-map [f6] 'find-tag)
-(define-key global-map [f7] 'cider-set-ns)
-(define-key global-map [f8] 'slamhound)
+;(define-key global-map [f7] 'cider-set-ns)
+;(define-key global-map [f8] 'slamhound)
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
+
+;; Monroe (clojure repl)
+
+(require 'monroe)
+(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
