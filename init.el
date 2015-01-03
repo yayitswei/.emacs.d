@@ -122,21 +122,12 @@
 
 (defvar clojure--prettify-symbols-alist nil)
 
-(unless (package-installed-p 'cider)
-  (package-refresh-contents)
-  (package-install 'cider))
-
 (unless (package-installed-p 'clojure-mode)
   (package-refresh-contents)
   (package-install 'clojure-mode))
 
 (setenv "PATH" (concat (getenv "HOME") "/bin:" (getenv "PATH")))
 (setq exec-path (cons "~/bin" exec-path))
-
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-(setq cider-hide-special-buffers t)
-(setq cider-repl-pop-to-buffer-on-connect nil)
-(setq cider-popup-stacktraces nil)
 
 ;; Super Tab
 (require 'smart-tab)
@@ -235,11 +226,24 @@
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-(add-hook 'cider-mode-hook 'smartparens-strict-mode)
+(add-hook 'monroe-mode-hook 'smartparens-strict-mode)
+
+(defun monroe-7888 ()
+  (interactive)
+  (setq monroe-default-host "localhost:7888")
+  (monroe "localhost:7888"))
+
+(defun monroe-7889 ()
+  (interactive)
+  (setq monroe-default-host "localhost:7889")
+  (monroe "localhost:7889"))
+
 
 ; TODO: add to nrepl-interaction-mode-map
 (define-key global-map [f2] 'find-tag)
 (define-key global-map [f4] 'monroe)
+(define-key global-map [f5] 'monroe-7888)
+(define-key global-map [f6] 'monroe-7889)
 
 ;(define-key global-map [f3] 'cider-repl-set-ns)
 ;(define-key global-map [f4] 'cider-connect)
@@ -269,18 +273,8 @@
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
 
-(defcustom cider-port "7888"
-   "The default port to connect to."
-   :type 'string
-   :group 'cider)
-
-(defcustom nrepl-port "7888"
-   "The default port to connect to."
-   :type 'string
-   :group 'nrepl)
-
 (setq monroe-default-host "localhost:7888")
-(setq monroe-detail-stacktraces t)
+;(setq monroe-detail-stacktraces t)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
