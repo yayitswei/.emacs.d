@@ -238,12 +238,47 @@
   (setq monroe-default-host "localhost:7889")
   (monroe "localhost:7889"))
 
+(defun monroe-debug-stacktrace ()
+  (interactive)
+  (monroe-input-sender
+   (get-buffer-process monroe-repl-buffer)
+   "(clojure.stacktrace/print-stack-trace *e)"))
+
+; SQLi
+
+(setq sql-connection-alist
+      '((pool-a
+         (sql-product 'postgres)
+         (sql-server "localhost")
+         (sql-user "wei")
+         (sql-database "crt"))
+        (pool-b
+         (sql-product 'postgres)
+         (sql-server "r"))))
+
+(defun sql-connect-preset (name)
+  "Connect to a predefined SQL connection listed in `sql-connection-alist'"
+  (eval `(let ,(cdr (assoc name sql-connection-alist))
+           (flet ((sql-get-login (&rest what)))
+             (sql-product-interactive sql-product)))))
+
+(defun connect-pool-a ()
+  (interactive)
+  (sql-connect-preset 'pool-a))
+
+(defun connect-pool-b ()
+  (interactive)
+  (sql-connect-preset 'pool-b))
 
 ; TODO: add to nrepl-interaction-mode-map
 (define-key global-map [f2] 'find-tag)
+(define-key global-map [f3] 'connect-pool-a)
 (define-key global-map [f4] 'monroe)
 (define-key global-map [f5] 'monroe-7888)
 (define-key global-map [f6] 'monroe-7889)
+(define-key global-map [f7] 'connect-pool-b)
+(define-key global-map [f8] 'monroe-debug-stacktrace)
+(define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
 
 ;(define-key global-map [f3] 'cider-repl-set-ns)
 ;(define-key global-map [f4] 'cider-connect)
