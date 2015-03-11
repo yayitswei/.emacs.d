@@ -1,3 +1,21 @@
+(when (equal system-type 'darwin)
+  ;; Treat option as meta and command as super
+  (setq mac-option-key-is-meta t)
+  (setq mac-command-key-is-meta nil)
+  (setq mac-command-modifier 'super)
+  (setq mac-option-modifier 'meta)
+
+  ;; Keybindings
+  (global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
+  (global-set-key (kbd "s-v") 'yank)
+  (global-set-key (kbd "s-c") 'kill-ring-save)
+  (global-set-key (kbd "s-x") 'kill-region)
+  (global-set-key (kbd "s-w") 'kill-this-buffer)
+  (global-set-key (kbd "s-z") 'undo-tree-undo)
+  (global-set-key (kbd "s-s") 'save-buffer)
+  (global-set-key (kbd "s-Z") 'undo-tree-redo)
+  (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -170,8 +188,8 @@
 (global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
 
 
-(set-face-attribute 'default nil :height 120)
-(set-cursor-color 'white)
+;; (set-face-attribute 'default nil :height 120)
+;; (set-cursor-color 'white)
 
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
@@ -244,6 +262,12 @@
    (get-buffer-process monroe-repl-buffer)
    "(clojure.stacktrace/print-stack-trace *e)"))
 
+(defun monroe-run-tests ()
+  (interactive)
+  (monroe-input-sender
+   (get-buffer-process monroe-repl-buffer)
+   "(run-tests)"))
+
 ; SQLi
 
 (setq sql-connection-alist
@@ -279,6 +303,8 @@
 (define-key global-map [f7] 'connect-pool-b)
 (define-key global-map [f8] 'monroe-debug-stacktrace)
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
+
+(global-set-key (kbd "C-c C-t") 'monroe-run-tests)
 
 ;(define-key global-map [f3] 'cider-repl-set-ns)
 ;(define-key global-map [f4] 'cider-connect)
@@ -322,3 +348,4 @@
 
 (setq js-indent-level 2)
 (setq css-indent-offset 2)
+(put 'upcase-region 'disabled nil)
