@@ -11,6 +11,7 @@
   (global-set-key (kbd "s-c") 'kill-ring-save)
   (global-set-key (kbd "s-x") 'kill-region)
   (global-set-key (kbd "s-w") 'kill-this-buffer)
+  (global-set-key (kbd "s-k") 'kill-this-buffer)
   (global-set-key (kbd "s-z") 'undo-tree-undo)
   (global-set-key (kbd "s-s") 'save-buffer)
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
