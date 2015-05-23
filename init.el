@@ -25,6 +25,10 @@
  '(auto-save-default nil)
  '(backup-inhibited t t)
  '(column-number-mode t)
+ '(custom-enabled-themes (quote (sanityinc-tomorrow-bright)))
+ '(custom-safe-themes
+   (quote
+    ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(delete-selection-mode t)
  '(helm-cmd-t-cache-threshhold nil)
  '(hl-paren-colors
@@ -71,6 +75,7 @@
 ;  (package-refresh-contents))
 
 (add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
 ;; Visual bell
@@ -120,11 +125,11 @@
 
 
 ;; Highlight-parentheses
-(require 'highlight-parentheses)
-(define-globalized-minor-mode global-highlight-parentheses-mode
-  highlight-parentheses-mode
-  (lambda ()
-    (highlight-parentheses-mode t)))
+;; (require 'highlight-parentheses)
+;; (define-globalized-minor-mode global-highlight-parentheses-mode
+  ;; highlight-parentheses-mode
+  ;; (lambda ()
+    ;; (highlight-parentheses-mode t)))
 
 ;; Classic Rainbow
 ;; (custom-set-variables '(hl-paren-colors (quote ("orange" "yellow" "greenyellow" "green" "springgreen" "cyan" "slateblue" "magenta" "purple"))))
@@ -135,7 +140,7 @@
 ;; Bright Rainbow
 
 
-(add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
+;; (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
 
 ;; cider (was nrepl)
 
@@ -161,21 +166,23 @@
 
 ;; Set color-theme
 (require 'color-theme)
+(require 'color-theme-tomorrow)
 (eval-after-load "color-theme"
   '(progn
      (color-theme-initialize)
+     ;; (color-theme-tomorrow-night)
      ;; (color-theme-sanityinc-tomorrow-night)
-     ;; (color-theme-sanityinc-tomorrow-bright)
+     (color-theme-sanityinc-tomorrow-bright)
      ;; (color-theme-sanityinc-tomorrow-blue)
      ;; (color-theme-sanityinc-tomorrow-eighties)
      ))
 
 (setq color-theme-is-global t)
-(add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
-(require 'color-theme-solarized)
-(setq solarized-termcolors 256)
+;; (add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
+;; (require 'color-theme-solarized)
+;; (setq solarized-termcolors 256)
 ;(color-theme-solarized-dark)
-(color-theme-solarized-light)
+;; (color-theme-solarized-light)
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
@@ -197,24 +204,19 @@
 (setq-default truncate-lines t)
 
 ;; Set parentheses color
-(defface esk-paren-face
-   '((((class color) (background dark))
-      (:foreground "grey40"))
-     (((class color) (background light))
-      (:foreground "grey55")))
-   "Face used to dim parentheses."
-   :group 'starter-kit-faces)
+;; (defface esk-paren-face
+   ;; '((((class color) (background dark))
+      ;; (:foreground "grey40"))
+     ;; (((class color) (background light))
+      ;; (:foreground "grey55")))
+   ;; "Face used to dim parentheses."
+   ;; :group 'starter-kit-faces)
 
-(font-lock-add-keywords 'clojure-mode
-                        '(("(\\|)" . 'esk-paren-face)))
+;; (font-lock-add-keywords 'clojure-mode '(("(\\|)" . 'esk-paren-face)))
 
 ;; WHITESPACES
 (require 'whitespace)
 (add-hook 'after-save-hook 'whitespace-cleanup)
-;;(setq whitespace-line-column 90)
-;; highlight trainling spaces, empty lines and etc
-;;(setq whitespace-style '(face empty tabs lines-tail trailing))
-;;(global-whitespace-mode t)
 
 ;; UNDO TREE
 (require 'undo-tree)
@@ -226,21 +228,6 @@
   (interactive)
   (previous-line)
   (textmate-next-line))
-
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(define-key global-map [(super return)] 'textmate-next-line)
-(define-key global-map [(super shift return)] 'prev-line-new)
-
-;; window navigation
-;; use Apple+arrow_keys to move cursor around split panes
-;(windmove-default-keybindings 'super)
-(global-set-key (kbd "<s-left>")  'windmove-left)
-(global-set-key (kbd "<s-right>") 'windmove-right)
-(global-set-key (kbd "<s-up>")    'windmove-up)
-(global-set-key (kbd "<s-down>")  'windmove-down)
-
-;; comment region
-(global-set-key (kbd "C-c ;") 'comment-region)
 
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
@@ -268,6 +255,12 @@
   (monroe-input-sender
    (get-buffer-process monroe-repl-buffer)
    "(run-tests)"))
+
+(defun figwheel-cljs-repl ()
+  (interactive)
+  (monroe-input-sender
+   (get-buffer-process monroe-repl-buffer)
+   "(do (use 'figwheel-sidecar.repl-api) (cljs-repl))"))
 
 ; SQLi
 
@@ -301,7 +294,7 @@
 (define-key global-map [f4] 'monroe)
 (define-key global-map [f5] 'monroe-7888)
 (define-key global-map [f6] 'monroe-7889)
-(define-key global-map [f7] 'connect-pool-b)
+(define-key global-map [f7] 'figwheel-cljs-repl)
 (define-key global-map [f8] 'monroe-debug-stacktrace)
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
 
@@ -315,6 +308,20 @@
 ;(define-key global-map [f8] 'slamhound)
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
+(define-key global-map (kbd "RET") 'newline-and-indent)
+(define-key global-map [(super return)] 'textmate-next-line)
+(define-key global-map [(super shift return)] 'prev-line-new)
+
+;; window navigation
+;; use Apple+arrow_keys to move cursor around split panes
+;(windmove-default-keybindings 'super)
+(global-set-key (kbd "<s-left>")  'windmove-left)
+(global-set-key (kbd "<s-right>") 'windmove-right)
+(global-set-key (kbd "<s-up>")    'windmove-up)
+(global-set-key (kbd "<s-down>")  'windmove-down)
+
+;; comment region
+(global-set-key (kbd "C-c ;") 'comment-region)
 ;; Monroe (clojure repl)
 
 (require 'monroe)
@@ -350,3 +357,8 @@
 (setq js-indent-level 2)
 (setq css-indent-offset 2)
 (put 'upcase-region 'disabled nil)
+
+(require 'simplenote2)
+(setq simplenote2-email "yayitswei@gmail.com")
+(setq simplenote2-password nil)
+(simplenote2-setup)
