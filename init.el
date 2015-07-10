@@ -289,7 +289,10 @@
   (sql-connect-preset 'pool-b))
 
 ; TODO: add to nrepl-interaction-mode-map
-(define-key global-map [f2] 'find-tag)
+;; (define-key global-map [f2] 'simplenote2-browse)
+(define-key global-map (kbd "<f2> b") 'simplenote2-browse)
+(define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
+(define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 (define-key global-map [f3] 'connect-pool-a)
 (define-key global-map [f4] 'monroe)
 (define-key global-map [f5] 'monroe-7888)
