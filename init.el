@@ -22,14 +22,19 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   (vector "#eaeaea" "#d54e53" "#b9ca4a" "#e7c547" "#7aa6da" "#c397d8" "#70c0b1" "#000000"))
  '(auto-save-default nil)
  '(backup-inhibited t t)
  '(column-number-mode t)
- '(custom-enabled-themes (quote (sanityinc-tomorrow-bright)))
+ ;; '(custom-enabled-themes (quote (sanityinc-tomorrow-eighties)))
  '(custom-safe-themes
    (quote
-    ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+    ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(delete-selection-mode t)
+ '(fci-rule-color "#424242")
  '(helm-cmd-t-cache-threshhold nil)
  '(hl-paren-colors
    (quote
@@ -37,7 +42,29 @@
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(scroll-bar-mode nil)
- '(tool-bar-mode nil))
+ '(tool-bar-mode nil)
+ '(vc-annotate-background nil)
+ '(vc-annotate-color-map
+   (quote
+    ((20 . "#d54e53")
+     (40 . "#e78c45")
+     (60 . "#e7c547")
+     (80 . "#b9ca4a")
+     (100 . "#70c0b1")
+     (120 . "#7aa6da")
+     (140 . "#c397d8")
+     (160 . "#d54e53")
+     (180 . "#e78c45")
+     (200 . "#e7c547")
+     (220 . "#b9ca4a")
+     (240 . "#70c0b1")
+     (260 . "#7aa6da")
+     (280 . "#c397d8")
+     (300 . "#d54e53")
+     (320 . "#e78c45")
+     (340 . "#e7c547")
+     (360 . "#b9ca4a"))))
+ '(vc-annotate-very-old-color nil))
 
 (setq default-directory "/Users/wei/code/cr")
 
@@ -170,9 +197,10 @@
 (eval-after-load "color-theme"
   '(progn
      (color-theme-initialize)
-     ;; (color-theme-tomorrow-night)
+     (color-theme-tomorrow-night)
      ;; (color-theme-sanityinc-tomorrow-night)
-     (color-theme-sanityinc-tomorrow-bright)
+     ;; (color-theme-sanityinc-tomorrow-bright)
+     ;; (color-theme-sanityinc-tomorrow-day)
      ;; (color-theme-sanityinc-tomorrow-blue)
      ;; (color-theme-sanityinc-tomorrow-eighties)
      ))
