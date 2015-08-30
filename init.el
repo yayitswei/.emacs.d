@@ -66,7 +66,7 @@
      (360 . "#b9ca4a"))))
  '(vc-annotate-very-old-color nil))
 
-(setq default-directory "/Users/wei/code/cr")
+(setq default-directory "/Users/wei/code")
 
 (global-auto-revert-mode 1)
 
