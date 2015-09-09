@@ -68,6 +68,8 @@
 
 (setq default-directory "/Users/wei/code")
 
+(desktop-save-mode 1)
+
 (global-auto-revert-mode 1)
 
 ;; Fix the PATH variable
@@ -148,7 +150,7 @@
 (require 'helm-C-x-b)
 (global-set-key [remap switch-to-buffer] 'helm-C-x-b)
 (global-set-key (kbd "s-b") 'helm-C-x-b)
-(global-set-key (kbd "s-F") 'helm-cmd-t-git-grep)
+(global-set-key (kbd "s-F") 'helm-cmd-t-grep)
 
 
 ;; Highlight-parentheses
