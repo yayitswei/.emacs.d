@@ -17,6 +17,9 @@
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
 
+;; backup files in separate directory
+(setq backup-directory-alist `(("." . "~/.emacs-saves")))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -245,8 +248,8 @@
 ;; (font-lock-add-keywords 'clojure-mode '(("(\\|)" . 'esk-paren-face)))
 
 ;; WHITESPACES
-(require 'whitespace)
-(add-hook 'after-save-hook 'whitespace-cleanup)
+;; (require 'whitespace)
+;; (add-hook 'after-save-hook 'whitespace-cleanup)
 
 ;; UNDO TREE
 (require 'undo-tree)
@@ -262,6 +265,12 @@
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+
+;; Monroe (clojure repl)
+;; (add-to-list 'load-path "~/.emacs.d/checkouts/monroe")
+(require 'monroe)
+(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
+
 (add-hook 'monroe-mode-hook 'smartparens-strict-mode)
 
 (defun monroe-7888 ()
@@ -273,6 +282,11 @@
   (interactive)
   (setq monroe-default-host "localhost:7889")
   (monroe "localhost:7889"))
+
+(defun air-7889 ()
+  (interactive)
+  (setq monroe-default-host "h:7889")
+  (monroe "h:7889"))
 
 (defun monroe-debug-stacktrace ()
   (interactive)
@@ -325,6 +339,8 @@
 (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 (define-key global-map [f3] 'connect-pool-a)
 (define-key global-map [f4] 'monroe)
+;(define-key global-map [f5] 'monroe-7888)
+;(define-key global-map [f6] 'monroe-7889)
 (define-key global-map [f5] 'monroe-7888)
 (define-key global-map [f6] 'monroe-7889)
 (define-key global-map [f7] 'figwheel-cljs-repl)
@@ -355,10 +371,6 @@
 
 ;; comment region
 (global-set-key (kbd "C-c ;") 'comment-region)
-;; Monroe (clojure repl)
-
-(require 'monroe)
-(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
@@ -376,7 +388,7 @@
     (when have-paste (push have-paste kill-ring))))
 
 (setq monroe-default-host "localhost:7888")
-;(setq monroe-detail-stacktraces t)
+(setq monroe-detail-stacktraces t)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -395,3 +407,33 @@
 (setq simplenote2-email "yayitswei@gmail.com")
 (setq simplenote2-password nil)
 (simplenote2-setup)
+
+(require 'web-mode)
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2))
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
+
+(require 'jsx-mode)
+(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . jsx-mode))
+
+;; (require 'jsx-mode)
+;; (defun my-jsx-mode-hook ()
+  ;; "Hooks for jsx mode."
+  ;; (setq jsx-mode-markup-indent-offset 2)
+  ;; (setq jsx-mode-css-indent-offset 2)
+  ;; (setq jsx-mode-code-indent-offset 2))
+;; (add-hook 'jsx-mode-hook  'my-jsx-mode-hook)
+
+
+;; (setq web-mode-content-types-alist
+  ;; '(("jsx" . "\\.js[x]?\\'")))
