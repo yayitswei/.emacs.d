@@ -110,6 +110,8 @@
 (add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
+(load "~/.emacs.d/checkouts/emacs-fireplace/fireplace")
+
 ;; Visual bell
 ;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
 (require 'rwd-bell)
@@ -306,6 +308,12 @@
    (get-buffer-process monroe-repl-buffer)
    "(do (use 'figwheel-sidecar.repl-api) (cljs-repl))"))
 
+(defun figwheel-android-repl ()
+  (interactive)
+  (monroe-input-sender
+   (get-buffer-process monroe-repl-buffer)
+   "(start-figwheel \"android\")"))
+
 ; SQLi
 
 (setq sql-connection-alist
@@ -332,6 +340,10 @@
   (interactive)
   (sql-connect-preset 'pool-b))
 
+(defun shake-phone ()
+  (interactive)
+  (shell-command "adb shell input keyevent 82"))
+
 ; TODO: add to nrepl-interaction-mode-map
 ;; (define-key global-map [f2] 'simplenote2-browse)
 (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
@@ -343,8 +355,9 @@
 ;(define-key global-map [f6] 'monroe-7889)
 (define-key global-map [f5] 'monroe-7888)
 (define-key global-map [f6] 'monroe-7889)
-(define-key global-map [f7] 'figwheel-cljs-repl)
-(define-key global-map [f8] 'monroe-debug-stacktrace)
+(define-key global-map [f7] 'figwheel-android-repl)
+(define-key global-map [f8] 'figwheel-cljs-repl)
+;; (define-key global-map [f8] 'monroe-debug-stacktrace)
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
 
 (global-set-key (kbd "C-c C-t") 'monroe-run-tests)
@@ -371,6 +384,8 @@
 
 ;; comment region
 (global-set-key (kbd "C-c ;") 'comment-region)
+
+(global-set-key (kbd "s-r") 'shake-phone)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
@@ -399,8 +414,9 @@
 
 ;; indents
 
-(setq js-indent-level 2)
+(setq js-indent-level 4)
 (setq css-indent-offset 2)
+(setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
 
 (require 'simplenote2)
@@ -437,3 +453,11 @@
 
 ;; (setq web-mode-content-types-alist
   ;; '(("jsx" . "\\.js[x]?\\'")))
+
+
+(add-hook 'python-mode-hook
+          (lambda () (setq indent-tabs-mode t)
+            (setq tab-width 4)
+            (setq py-indent-tabs-mode t)
+            (add-to-list 'write-file-functions
+                         'delete-trailing-whitespace)\}))
