@@ -364,6 +364,8 @@
 ;; (setq monroe-default-host "localhost:7888")
 ;; (setq monroe-detail-stacktraces t)
 
+(setq inf-clojure-program "telnet localhost 9998")
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
