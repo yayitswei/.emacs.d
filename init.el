@@ -269,11 +269,12 @@
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 
 ;; Monroe (clojure repl)
-;; (add-to-list 'load-path "~/.emacs.d/checkouts/monroe")
+(add-to-list 'load-path "~/.emacs.d/checkouts/monroe")
 (require 'monroe)
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
+;; (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
-(add-hook 'monroe-mode-hook 'smartparens-strict-mode)
+;; (add-hook 'monroe-mode-hook 'smartparens-strict-mode)
 
 (defun monroe-7888 ()
   (interactive)
@@ -321,7 +322,7 @@
          (sql-product 'postgres)
          (sql-server "localhost")
          (sql-user "wei")
-         (sql-database "crt"))
+         (sql-database "sf_dev"))
         (pool-b
          (sql-product 'postgres)
          (sql-server "r"))))
@@ -351,8 +352,6 @@
 (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 (define-key global-map [f3] 'connect-pool-a)
 (define-key global-map [f4] 'monroe)
-;(define-key global-map [f5] 'monroe-7888)
-;(define-key global-map [f6] 'monroe-7889)
 (define-key global-map [f5] 'monroe-7888)
 (define-key global-map [f6] 'monroe-7889)
 (define-key global-map [f7] 'figwheel-android-repl)
