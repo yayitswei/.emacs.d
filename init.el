@@ -184,6 +184,10 @@
   (package-refresh-contents)
   (package-install 'clojure-mode))
 
+(unless (package-installed-p 'inf-clojure)
+  (package-refresh-contents)
+  (package-install 'inf-clojure))
+
 (setenv "PATH" (concat (getenv "HOME") "/bin:" (getenv "PATH")))
 (setq exec-path (cons "~/bin" exec-path))
 
@@ -267,53 +271,9 @@
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-
-;; Monroe (clojure repl)
-(add-to-list 'load-path "~/.emacs.d/checkouts/monroe")
-(require 'monroe)
-(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
-;; (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
+(add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
 ;; (add-hook 'monroe-mode-hook 'smartparens-strict-mode)
-
-(defun monroe-7888 ()
-  (interactive)
-  (setq monroe-default-host "localhost:7888")
-  (monroe "localhost:7888"))
-
-(defun monroe-7889 ()
-  (interactive)
-  (setq monroe-default-host "localhost:7889")
-  (monroe "localhost:7889"))
-
-(defun air-7889 ()
-  (interactive)
-  (setq monroe-default-host "h:7889")
-  (monroe "h:7889"))
-
-(defun monroe-debug-stacktrace ()
-  (interactive)
-  (monroe-input-sender
-   (get-buffer-process monroe-repl-buffer)
-   "(clojure.stacktrace/print-stack-trace *e)"))
-
-(defun monroe-run-tests ()
-  (interactive)
-  (monroe-input-sender
-   (get-buffer-process monroe-repl-buffer)
-   "(run-tests)"))
-
-(defun figwheel-cljs-repl ()
-  (interactive)
-  (monroe-input-sender
-   (get-buffer-process monroe-repl-buffer)
-   "(do (use 'figwheel-sidecar.repl-api) (cljs-repl))"))
-
-(defun figwheel-android-repl ()
-  (interactive)
-  (monroe-input-sender
-   (get-buffer-process monroe-repl-buffer)
-   "(start-figwheel \"android\")"))
 
 ; SQLi
 
@@ -351,15 +311,15 @@
 (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
 (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 (define-key global-map [f3] 'connect-pool-a)
-(define-key global-map [f4] 'monroe)
-(define-key global-map [f5] 'monroe-7888)
-(define-key global-map [f6] 'monroe-7889)
-(define-key global-map [f7] 'figwheel-android-repl)
-(define-key global-map [f8] 'figwheel-cljs-repl)
+;; (define-key global-map [f4] 'monroe)
+;; (define-key global-map [f5] 'monroe-7888)
+;; (define-key global-map [f6] 'monroe-7889)
+;; (define-key global-map [f7] 'figwheel-android-repl)
+;; (define-key global-map [f8] 'figwheel-cljs-repl)
 ;; (define-key global-map [f8] 'monroe-debug-stacktrace)
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
 
-(global-set-key (kbd "C-c C-t") 'monroe-run-tests)
+;; (global-set-key (kbd "C-c C-t") 'monroe-run-tests)
 
 ;(define-key global-map [f3] 'cider-repl-set-ns)
 ;(define-key global-map [f4] 'cider-connect)
@@ -401,8 +361,8 @@
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
 
-(setq monroe-default-host "localhost:7888")
-(setq monroe-detail-stacktraces t)
+;; (setq monroe-default-host "localhost:7888")
+;; (setq monroe-detail-stacktraces t)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
