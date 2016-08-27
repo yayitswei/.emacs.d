@@ -188,6 +188,28 @@
   (package-refresh-contents)
   (package-install 'inf-clojure))
 
+(require 'inf-clojure)
+
+(defun inf-clojure-set-ns-instantly ()
+  "Set the ns of the inferior Clojure process to NS.
+Defaults to the ns of the current buffer."
+  (interactive)
+  (comint-proc-query (inf-clojure-proc)
+                     (format inf-clojure-set-ns-command (clojure-find-ns))))
+
+(defun inf-clojure-show-var-documentation-instantly ()
+  "Send a command to the inferior Clojure to give documentation for VAR.
+See variable `inf-clojure-var-doc-command'."
+  (interactive)
+  (comint-proc-query (inf-clojure-proc)
+                     (format inf-clojure-var-doc-command (inf-clojure-var-at-pt))))
+
+(define-key inf-clojure-minor-mode-map (kbd "C-c C-o") #'inf-clojure-clear-repl-buffer-instantly)
+(define-key inf-clojure-minor-mode-map (kbd "C-c C-n") #'inf-clojure-set-ns-instantly)
+(define-key inf-clojure-minor-mode-map (kbd "C-c C-k") #'inf-clojure-eval-buffer)
+(define-key inf-clojure-minor-mode-map (kbd "C-c C-d") #'inf-clojure-show-var-documentation-instantly)
+(define-key inf-clojure-mode-map (kbd "C-c C-d") #'inf-clojure-show-var-documentation-instantly)
+
 (setenv "PATH" (concat (getenv "HOME") "/bin:" (getenv "PATH")))
 (setq exec-path (cons "~/bin" exec-path))
 
@@ -311,23 +333,42 @@
 (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
 (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 (define-key global-map [f3] 'connect-pool-a)
+
+;; open this config file
+(define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
+
+;; toggle line wrap
+(define-key global-map (kbd "<f9> l") 'visual-line-mode)
+
+;; monroe shortcuts
 ;; (define-key global-map [f4] 'monroe)
 ;; (define-key global-map [f5] 'monroe-7888)
 ;; (define-key global-map [f6] 'monroe-7889)
 ;; (define-key global-map [f7] 'figwheel-android-repl)
 ;; (define-key global-map [f8] 'figwheel-cljs-repl)
 ;; (define-key global-map [f8] 'monroe-debug-stacktrace)
-(define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
-
 ;; (global-set-key (kbd "C-c C-t") 'monroe-run-tests)
 
+;; cider shortcuts
 ;(define-key global-map [f3] 'cider-repl-set-ns)
 ;(define-key global-map [f4] 'cider-connect)
 ;(define-key global-map [f5] 'cider-load-current-buffer)
 ;(define-key global-map [f6] 'find-tag)
 ;(define-key global-map [f7] 'cider-set-ns)
 ;(define-key global-map [f8] 'slamhound)
-(define-key global-map (kbd "<f9> l") 'visual-line-mode)
+
+(define-key global-map [f5]
+  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7888")))
+(define-key global-map [f6]
+  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9998")))
+(define-key global-map [f7]
+  (lambda () (interactive) (setq inf-clojure-program "telnet localhost 9998")))
+(define-key global-map (kbd "<f8> k")
+  (lambda () (interactive)
+    (ignore-errors (kill-process "inf-clojure"))
+    (ignore-errors (kill-process "inf-clojure<1>"))
+    (ignore-errors (kill-process "inf-clojure<2>"))
+    (ignore-errors (kill-process "inf-clojure<3>"))))
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map [(super return)] 'textmate-next-line)
@@ -364,7 +405,6 @@
 ;; (setq monroe-default-host "localhost:7888")
 ;; (setq monroe-detail-stacktraces t)
 
-(setq inf-clojure-program "telnet localhost 9998")
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

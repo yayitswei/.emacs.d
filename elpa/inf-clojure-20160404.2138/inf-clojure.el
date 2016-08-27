@@ -94,7 +94,6 @@ mode.  Default is whitespace followed by 0 or 1 single-letter colon-keyword
     (define-key map "\C-c\C-e" #'inf-clojure-eval-last-sexp)
     (define-key map "\C-c\C-c" #'inf-clojure-eval-defun)     ; SLIME/CIDER style
     (define-key map "\C-c\C-b" #'inf-clojure-eval-buffer)
-    (define-key map "\C-c\C-k" #'inf-clojure-eval-buffer)
     (define-key map "\C-c\C-r" #'inf-clojure-eval-region)
     (define-key map "\C-c\C-n" #'inf-clojure-eval-form-and-next)
     (define-key map "\C-c\C-z" #'inf-clojure-switch-to-repl)
