@@ -328,10 +328,10 @@ See variable `inf-clojure-var-doc-command'."
   (shell-command "adb shell input keyevent 82"))
 
 ; TODO: add to nrepl-interaction-mode-map
-;; (define-key global-map [f2] 'simplenote2-browse)
-(define-key global-map (kbd "<f2> b") 'simplenote2-browse)
-(define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
-(define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
+;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
+;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
+;; (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
+
 (define-key global-map [f3] 'connect-pool-a)
 
 ;; open this config file
@@ -420,10 +420,10 @@ See variable `inf-clojure-var-doc-command'."
 (setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
 
-(require 'simplenote2)
-(setq simplenote2-email "yayitswei@gmail.com")
-(setq simplenote2-password nil)
-(simplenote2-setup)
+;; (require 'simplenote2)
+;; (setq simplenote2-email "yayitswei@gmail.com")
+;; (setq simplenote2-password nil)
+;; (simplenote2-setup)
 
 (require 'web-mode)
 (defun my-web-mode-hook ()
