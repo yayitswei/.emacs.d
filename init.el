@@ -295,8 +295,6 @@ See variable `inf-clojure-var-doc-command'."
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
-;; (add-hook 'monroe-mode-hook 'smartparens-strict-mode)
-
 ; SQLi
 
 (setq sql-connection-alist
@@ -340,27 +338,10 @@ See variable `inf-clojure-var-doc-command'."
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
-;; monroe shortcuts
-;; (define-key global-map [f4] 'monroe)
-;; (define-key global-map [f5] 'monroe-7888)
-;; (define-key global-map [f6] 'monroe-7889)
-;; (define-key global-map [f7] 'figwheel-android-repl)
-;; (define-key global-map [f8] 'figwheel-cljs-repl)
-;; (define-key global-map [f8] 'monroe-debug-stacktrace)
-;; (global-set-key (kbd "C-c C-t") 'monroe-run-tests)
-
-;; cider shortcuts
-;(define-key global-map [f3] 'cider-repl-set-ns)
-;(define-key global-map [f4] 'cider-connect)
-;(define-key global-map [f5] 'cider-load-current-buffer)
-;(define-key global-map [f6] 'find-tag)
-;(define-key global-map [f7] 'cider-set-ns)
-;(define-key global-map [f8] 'slamhound)
-
 (define-key global-map [f5]
   (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7888")))
 (define-key global-map [f6]
-  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9998")))
+  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9995")))
 (define-key global-map [f7]
   (lambda () (interactive) (setq inf-clojure-program "telnet localhost 9998")))
 (define-key global-map (kbd "<f8> k")
@@ -401,10 +382,6 @@ See variable `inf-clojure-var-doc-command'."
   (let ((have-paste (and interprogram-paste-function
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
-
-;; (setq monroe-default-host "localhost:7888")
-;; (setq monroe-detail-stacktraces t)
-
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
