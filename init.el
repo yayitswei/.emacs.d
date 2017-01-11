@@ -71,9 +71,9 @@
 
 (setq default-directory "/Users/wei/code")
 
-(desktop-save-mode 1)
+(desktop-save-mode 0)
 
-(global-auto-revert-mode 1)
+(global-auto-revert-mode 0)
 
 ;; Fix the PATH variable
 ;(defun set-exec-path-from-shell-PATH ()
@@ -341,9 +341,12 @@ See variable `inf-clojure-var-doc-command'."
 (define-key global-map [f5]
   (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7888")))
 (define-key global-map [f6]
-  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9995")))
-(define-key global-map [f7]
   (lambda () (interactive) (setq inf-clojure-program "telnet localhost 9998")))
+;;(define-key global-map [f6]
+;;  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7889")))
+(define-key global-map [f7]
+  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9995")))
+
 (define-key global-map (kbd "<f8> k")
   (lambda () (interactive)
     (ignore-errors (kill-process "inf-clojure"))
@@ -439,3 +442,4 @@ See variable `inf-clojure-var-doc-command'."
             (setq py-indent-tabs-mode t)
             (add-to-list 'write-file-functions
                          'delete-trailing-whitespace)\}))
+(put 'downcase-region 'disabled nil)
