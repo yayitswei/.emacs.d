@@ -184,31 +184,8 @@
   (package-refresh-contents)
   (package-install 'clojure-mode))
 
-(unless (package-installed-p 'inf-clojure)
-  (package-refresh-contents)
-  (package-install 'inf-clojure))
-
-(require 'inf-clojure)
-
-(defun inf-clojure-set-ns-instantly ()
-  "Set the ns of the inferior Clojure process to NS.
-Defaults to the ns of the current buffer."
-  (interactive)
-  (comint-proc-query (inf-clojure-proc)
-                     (format inf-clojure-set-ns-command (clojure-find-ns))))
-
-(defun inf-clojure-show-var-documentation-instantly ()
-  "Send a command to the inferior Clojure to give documentation for VAR.
-See variable `inf-clojure-var-doc-command'."
-  (interactive)
-  (comint-proc-query (inf-clojure-proc)
-                     (format inf-clojure-var-doc-command (inf-clojure-var-at-pt))))
-
-(define-key inf-clojure-minor-mode-map (kbd "C-c C-o") #'inf-clojure-clear-repl-buffer-instantly)
-(define-key inf-clojure-minor-mode-map (kbd "C-c C-n") #'inf-clojure-set-ns-instantly)
-(define-key inf-clojure-minor-mode-map (kbd "C-c C-k") #'inf-clojure-eval-buffer)
-(define-key inf-clojure-minor-mode-map (kbd "C-c C-d") #'inf-clojure-show-var-documentation-instantly)
-(define-key inf-clojure-mode-map (kbd "C-c C-d") #'inf-clojure-show-var-documentation-instantly)
+(require 'monroe)
+(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
 (setenv "PATH" (concat (getenv "HOME") "/bin:" (getenv "PATH")))
 (setq exec-path (cons "~/bin" exec-path))
@@ -293,7 +270,6 @@ See variable `inf-clojure-var-doc-command'."
 ;; SMARTPARENS (paredit replacement)
 (require 'smartparens-custom-config)
 (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-(add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
 
 ; SQLi
 
@@ -339,20 +315,15 @@ See variable `inf-clojure-var-doc-command'."
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
 (define-key global-map [f5]
-  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7888")))
+  (lambda ()  (interactive) (monroe "localhost:7888")))
 (define-key global-map [f6]
-  (lambda () (interactive) (setq inf-clojure-program "telnet localhost 9998")))
-;;(define-key global-map [f6]
-;;  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 7889")))
+  (lambda ()  (interactive) (monroe "localhost:7889")))
 (define-key global-map [f7]
-  (lambda () (interactive) (setq inf-clojure-program "lein repl :connect 9995")))
+  (lambda ()  (interactive) (monroe "localhost:9995")))
 
 (define-key global-map (kbd "<f8> k")
   (lambda () (interactive)
-    (ignore-errors (kill-process "inf-clojure"))
-    (ignore-errors (kill-process "inf-clojure<1>"))
-    (ignore-errors (kill-process "inf-clojure<2>"))
-    (ignore-errors (kill-process "inf-clojure<3>"))))
+    (ignore-errors (kill-process "monroe"))))
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map [(super return)] 'textmate-next-line)
@@ -405,41 +376,10 @@ See variable `inf-clojure-var-doc-command'."
 ;; (setq simplenote2-password nil)
 ;; (simplenote2-setup)
 
-(require 'web-mode)
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
-
-(require 'jsx-mode)
-(add-to-list 'auto-mode-alist '("\\.js[x]?\\'" . jsx-mode))
-
-;; (require 'jsx-mode)
-;; (defun my-jsx-mode-hook ()
-  ;; "Hooks for jsx mode."
-  ;; (setq jsx-mode-markup-indent-offset 2)
-  ;; (setq jsx-mode-css-indent-offset 2)
-  ;; (setq jsx-mode-code-indent-offset 2))
-;; (add-hook 'jsx-mode-hook  'my-jsx-mode-hook)
-
-
-;; (setq web-mode-content-types-alist
-  ;; '(("jsx" . "\\.js[x]?\\'")))
-
-
 (add-hook 'python-mode-hook
-          (lambda () (setq indent-tabs-mode t)
-            (setq tab-width 4)
-            (setq py-indent-tabs-mode t)
-            (add-to-list 'write-file-functions
-                         'delete-trailing-whitespace)\}))
+      (lambda ()
+        (setq indent-tabs-mode t)
+        (setq tab-width 4)
+        (setq python-indent 4)))
+
 (put 'downcase-region 'disabled nil)
