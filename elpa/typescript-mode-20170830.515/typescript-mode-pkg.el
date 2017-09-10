@@ -1,0 +1,1 @@
+(define-package "typescript-mode" "20170830.515" "Major mode for editing typescript" 'nil :commit "f6d28c7a0df305893ac567cacc755a1db1bcc86c" :url "http://github.com/ananthakumaran/typescript.el" :keywords '("typescript" "languages"))
