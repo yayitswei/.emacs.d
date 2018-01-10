@@ -45,6 +45,9 @@
     ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
+ '(package-selected-packages
+   (quote
+    (helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
@@ -152,12 +155,14 @@
 ;(textmate-mode)
 
 ;; faster command-t search
-(add-to-list 'load-path "~/.emacs.d/elpa/helm-20140223.1212")
-(require 'helm-config)
-(add-to-list 'load-path "~/.emacs.d/checkouts/helm-cmd-t")
-(require 'helm-cmd-t)
+;(add-to-list 'load-path "~/.emacs.d/checkouts/emacs-async")
+;(add-to-list 'load-path "~/.emacs.d/checkouts/helm")
+;(add-to-list 'load-path "~/.emacs.d/checkouts/helm-cmd-t")
+;(add-to-list 'load-path "~/.emacs.d/checkouts/popup-el");
+;(require 'helm-config)
+;(require 'helm-cmd-t)
 (global-set-key (kbd "s-t") 'helm-cmd-t)
-(require 'helm-C-x-b)
+;(require 'helm-C-x-b)
 (global-set-key [remap switch-to-buffer] 'helm-C-x-b)
 (global-set-key (kbd "s-b") 'helm-C-x-b)
 (global-set-key (kbd "s-F") 'helm-cmd-t-grep)
