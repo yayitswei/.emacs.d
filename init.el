@@ -371,7 +371,8 @@
 
 ;; indents
 
-(setq js-indent-level 4)
+(setq js-indent-level 2)
+(setq typescript-indent-level 2)
 (setq css-indent-offset 2)
 (setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
