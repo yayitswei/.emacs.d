@@ -39,7 +39,7 @@
     ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(delete-selection-mode t)
  '(fci-rule-color "#424242")
- '(helm-cmd-t-cache-threshhold nil)
+ ;; '(helm-cmd-t-cache-threshhold nil)
  '(hl-paren-colors
    (quote
     ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
@@ -158,14 +158,18 @@
 ;(add-to-list 'load-path "~/.emacs.d/checkouts/emacs-async")
 ;(add-to-list 'load-path "~/.emacs.d/checkouts/helm")
 ;(add-to-list 'load-path "~/.emacs.d/checkouts/helm-cmd-t")
+(add-to-list 'load-path "~/.emacs.d/checkouts/helm-ls-git")
 ;(add-to-list 'load-path "~/.emacs.d/checkouts/popup-el");
 ;(require 'helm-config)
 ;(require 'helm-cmd-t)
-(global-set-key (kbd "s-t") 'helm-cmd-t)
+(require 'helm-ls-git)
+;; (global-set-key (kbd "s-t") 'helm-cmd-t)
+(global-set-key (kbd "s-t") 'helm-ls-git-ls)
 ;(require 'helm-C-x-b)
-(global-set-key [remap switch-to-buffer] 'helm-C-x-b)
-(global-set-key (kbd "s-b") 'helm-C-x-b)
-(global-set-key (kbd "s-F") 'helm-cmd-t-grep)
+;; (global-set-key [remap switch-to-buffer] 'helm-C-x-b)
+(global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-b") 'helm-browse-project)
+(global-set-key (kbd "s-F") 'helm-grep-do-git-grep)
 
 
 ;; Highlight-parentheses
