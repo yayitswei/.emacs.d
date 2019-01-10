@@ -1,4 +1,0 @@
-.cask*
-.elc*
-elpa
-test/fixture/*

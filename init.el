@@ -1,3 +1,4 @@
+
 (when (equal system-type 'darwin)
   ;; Treat option as meta and command as super
   (setq mac-option-key-is-meta t)
@@ -16,6 +17,9 @@
   (global-set-key (kbd "s-s") 'save-buffer)
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
+
+;; TODO: remap f1 to escape
+;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
 
 ;; backup files in separate directory
 (setq backup-directory-alist `(("." . "~/.emacs-saves")))
@@ -46,7 +50,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
+    (php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
@@ -98,8 +102,9 @@
   (set-exec-path-from-shell-PATH)
   (global-unset-key "\C-z"))
 
-(require 'bs)
-(global-set-key (kbd "C-x C-b") 'bs-show)
+(global-set-key (kbd "s-t") 'helm-ls-git-ls)
+(global-set-key (kbd "s-b") 'helm-buffers-list)
+(global-set-key (kbd "s-F") 'helm-git-grep)
 
 ;; Package.el customization
 (package-initialize)
@@ -148,23 +153,6 @@
 ;; evil nerd commenter
 (evilnc-default-hotkeys)
 
-;; Textmate mode
-;; too slow, too many features I don't need
-;(require 'textmate)
-;(textmate-mode)
-
-;; faster command-t search
-(add-to-list 'load-path "~/.emacs.d/checkouts/helm-ls-git")
-(add-to-list 'load-path "~/.emacs.d/checkouts/helm-git-grep")
-(require 'helm-ls-git)
-(global-set-key (kbd "s-t") 'helm-ls-git-ls)
-;; (global-set-key [remap switch-to-buffer] 'helm-C-x-b)
-(global-set-key (kbd "s-b") 'helm-buffers-list)
-;; (global-set-key (kbd "s-b") 'helm-browse-project)
-(require 'helm-git-grep)
-(global-set-key (kbd "s-F") 'helm-git-grep)
-
-
 ;; Highlight-parentheses
 ;; (require 'highlight-parentheses)
 ;; (define-globalized-minor-mode global-highlight-parentheses-mode
@@ -180,10 +168,7 @@
 ;; (custom-set-variables '(hl-paren-colors (quote ("#cc6666" "#de935f" "#f0c674" "#b5bd68" "#8abeb7" "#81a2be" "#b294bb"))))
 ;; Bright Rainbow
 
-
 ;; (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
-
-;; cider (was nrepl)
 
 (defvar clojure--prettify-symbols-alist nil)
 
@@ -384,11 +369,16 @@
 ;; (setq simplenote2-password nil)
 ;; (simplenote2-setup)
 
+;; (add-hook 'python-mode-hook
+      ;; (lambda ()
+        ;; (setq indent-tabs-mode t)
+        ;; (setq tab-width 4)
+        ;; (setq python-indent 4)))
+
 (add-hook 'python-mode-hook
       (lambda ()
-        (setq indent-tabs-mode t)
-        (setq tab-width 4)
-        (setq python-indent 4)))
+        (setq indent-tabs-mode nil)
+        (setq tab-width 2)))
 
 (put 'downcase-region 'disabled nil)
 
@@ -421,3 +411,16 @@
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
+
+;; use tabs in php mode
+(add-hook 'php-mode-hook 'my-php-mode-hook)
+(defun my-php-mode-hook ()
+  (setq indent-tabs-mode t)
+  (let ((my-tab-width 4))
+    (setq tab-width my-tab-width)
+    (setq c-basic-indent my-tab-width)
+    (set (make-local-variable 'tab-stop-list)
+         (number-sequence my-tab-width 200 my-tab-width))))
+
+;; (with-eval-after-load 'evil-maps (define-key evil-insert-state-map (kbd "f1") 'evil-normal-state)) 
+(define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
