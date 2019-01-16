@@ -122,8 +122,6 @@
 (add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
-(load "~/.emacs.d/checkouts/emacs-fireplace/fireplace")
-
 ;; Visual bell
 ;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
 (require 'rwd-bell)
@@ -354,7 +352,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:inherit nil :stipple nil :background "#1d1f21" :foreground "#c5c8c6" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
 
 ;; indents
 
