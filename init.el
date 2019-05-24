@@ -422,3 +422,5 @@
 
 ;; (with-eval-after-load 'evil-maps (define-key evil-insert-state-map (kbd "f1") 'evil-normal-state)) 
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
+
+(setq tramp-default-method "ssh")
