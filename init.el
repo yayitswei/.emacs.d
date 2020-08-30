@@ -50,7 +50,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
+    (fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
@@ -125,7 +125,9 @@
 ;; Visual bell
 ;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
 (require 'rwd-bell)
-(setq visible-bell t)
+;; (setq visible-bell t)
+(setq ring-bell-function 'ignore)
+
 
 ;; PLUGINS
 
@@ -309,7 +311,7 @@
 (define-key global-map [f6]
   (lambda ()  (interactive) (monroe "localhost:7889")))
 (define-key global-map [f7]
-  (lambda ()  (interactive) (monroe "localhost:9995")))
+  (lambda ()  (interactive) (monroe "localhost:9000")))
 
 (define-key global-map (kbd "<f8> k")
   (lambda () (interactive)
@@ -424,3 +426,8 @@
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
 
 (setq tramp-default-method "ssh")
+
+
+;; fennel
+;; (autoload 'fennel-mode "/Users/wei/.emacs.d/elpa/fennel-mode-20190927.4" nil t)
+(add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
