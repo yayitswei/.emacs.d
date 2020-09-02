@@ -118,7 +118,6 @@
 ;  (package-refresh-contents))
 
 (add-to-list 'load-path "~/.emacs.d/custom")
-(add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
 (add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
 ;; Visual bell
@@ -194,18 +193,6 @@
 
 ;; Set color-theme
 (require 'color-theme)
-(require 'color-theme-tomorrow)
-(eval-after-load "color-theme"
-  '(progn
-     (color-theme-initialize)
-     ;; (color-theme-tomorrow-night)
-     (color-theme-sanityinc-tomorrow-night)
-     ;; (color-theme-sanityinc-tomorrow-bright)
-     ;; (color-theme-sanityinc-tomorrow-day)
-     ;; (color-theme-sanityinc-tomorrow-blue)
-     ;; (color-theme-sanityinc-tomorrow-eighties)
-     ))
-
 (setq color-theme-is-global t)
 ;; (add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
 ;; (require 'color-theme-solarized)
