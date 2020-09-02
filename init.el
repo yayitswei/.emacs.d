@@ -36,9 +36,8 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+    ("6b2c6e5bc1e89cf7d927d17f436626eac98a04fdab89e080f4e193f6d291c93d" "4cdea318a3efab7ff7c832daea05f6b2d5d0a18b9bfa79763b674e860ecbc6da" "00f09a2728377a37e9a24d631de94cc7440e0803e218474cac287061951c205c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(delete-selection-mode t)
- ;; '(fci-rule-color "#424242")
  '(hl-paren-colors
    (quote
     ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
@@ -46,11 +45,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode ack)))
- '(safe-local-variable-values
-   (quote
-    ((cider-refresh-after-fn . "integrant.repl/resume")
-     (cider-refresh-before-fn . "integrant.repl/suspend"))))
+    (color-theme-sanityinc-solarized clojure-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode cljsbuild-mode ack)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil)
  '(vc-annotate-background nil)
@@ -189,7 +184,7 @@
 ;; APPEARANCE
 
 ;; Set color-theme
-(require 'color-theme)
+;; (require 'color-theme)
 
 ;; (set-face-attribute 'default nil :height 120)
 ;; (set-cursor-color 'white)
@@ -384,8 +379,9 @@
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
 
 (setq tramp-default-method "ssh")
-
-
-;; fennel
-;; (autoload 'fennel-mode "/Users/wei/.emacs.d/elpa/fennel-mode-20190927.4" nil t)
-(add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

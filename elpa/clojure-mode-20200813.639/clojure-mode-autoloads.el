@@ -1,10 +1,12 @@
 ;;; clojure-mode-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
+
+(add-to-list 'load-path (directory-file-name
+                         (or (file-name-directory #$) (car load-path))))
+
 
-;;;### (autoloads nil "clojure-mode" "clojure-mode.el" (22868 18229
-;;;;;;  0 0))
+;;;### (autoloads nil "clojure-mode" "clojure-mode.el" (0 0 0 0))
 ;;; Generated autoloads from clojure-mode.el
 
 (autoload 'clojure-mode "clojure-mode" "\
@@ -15,10 +17,10 @@ Major mode for editing Clojure code.
 \(fn)" t nil)
 
 (autoload 'clojure-unwind "clojure-mode" "\
-Unwind thread at point or above point by one level.
-Return nil if there are no more levels to unwind.
+Unwind thread at point or above point by N levels.
+With universal argument \\[universal-argument], fully unwind thread.
 
-\(fn)" t nil)
+\(fn &optional N)" t nil)
 
 (autoload 'clojure-unwind-all "clojure-mode" "\
 Fully unwind thread at point or above point.
@@ -32,13 +34,17 @@ Thread by one more level an existing threading macro.
 
 (autoload 'clojure-thread-first-all "clojure-mode" "\
 Fully thread the form at point using ->.
-When BUT-LAST is passed the last expression is not threaded.
+
+When BUT-LAST is non-nil, the last expression is not threaded.
+Default value is `clojure-thread-all-but-last'.
 
 \(fn BUT-LAST)" t nil)
 
 (autoload 'clojure-thread-last-all "clojure-mode" "\
 Fully thread the form at point using ->>.
-When BUT-LAST is passed the last expression is not threaded.
+
+When BUT-LAST is non-nil, the last expression is not threaded.
+Default value is `clojure-thread-all-but-last'.
 
 \(fn BUT-LAST)" t nil)
 
@@ -87,13 +93,15 @@ Change a surrounding when to when-not, or vice-versa.
 
 (autoload 'clojure-let-backward-slurp-sexp "clojure-mode" "\
 Slurp the s-expression before the let form into the let form.
-With a numberic prefix argument slurp the previous N s-expression into the let form.
+With a numeric prefix argument slurp the previous N s-expressions
+into the let form.
 
 \(fn &optional N)" t nil)
 
 (autoload 'clojure-let-forward-slurp-sexp "clojure-mode" "\
 Slurp the next s-expression after the let form into the let form.
-With a numeric prefix argument slurp the next N s-expressions into the let form.
+With a numeric prefix argument slurp the next N s-expressions
+into the let form.
 
 \(fn &optional N)" t nil)
 
@@ -105,6 +113,16 @@ With a numeric prefix argument the let is introduced N lists up.
 
 (autoload 'clojure-move-to-let "clojure-mode" "\
 Move the form at point to a binding in the nearest let.
+
+\(fn)" t nil)
+
+(autoload 'clojure-rename-ns-alias "clojure-mode" "\
+Rename a namespace alias.
+
+\(fn)" t nil)
+
+(autoload 'clojure-add-arity "clojure-mode" "\
+Add an arity to a function.
 
 \(fn)" t nil)
 
@@ -122,22 +140,15 @@ Major mode for editing ClojureC code.
 
 \(fn)" t nil)
 
-(autoload 'clojurex-mode "clojure-mode" "\
-Major mode for editing ClojureX code.
-
-\\{clojurex-mode-map}
-
-\(fn)" t nil)
-
 (add-to-list 'auto-mode-alist '("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode))
 
 (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
 
-(add-to-list 'auto-mode-alist '("\\.cljx\\'" . clojurex-mode))
-
 (add-to-list 'auto-mode-alist '("\\.cljs\\'" . clojurescript-mode))
 
 (add-to-list 'auto-mode-alist '("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "clojure-mode" '("clojure" "add-custom-clojure-indents" "define-clojure-indent" "put-clojure-indent")))
 
 ;;;***
 
@@ -145,5 +156,6 @@ Major mode for editing ClojureX code.
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
+;; coding: utf-8
 ;; End:
 ;;; clojure-mode-autoloads.el ends here
