@@ -18,9 +18,6 @@
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
 
-;; TODO: remap f1 to escape
-;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
-
 ;; backup files in separate directory
 (setq backup-directory-alist `(("." . "~/.emacs-saves")))
 
@@ -193,7 +190,6 @@
 
 ;; Set color-theme
 (require 'color-theme)
-(setq color-theme-is-global t)
 
 ;; (set-face-attribute 'default nil :height 120)
 ;; (set-cursor-color 'white)
