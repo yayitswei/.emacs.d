@@ -1,3 +1,23 @@
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auto-save-default nil)
+ '(backup-inhibited t t)
+ '(clojure-defun-indents (quote (always-ident)))
+ '(column-number-mode t)
+ '(custom-safe-themes
+   (quote
+    ("cda6cb17953b3780294fa6688b3fe0d3d12c1ef019456333e3d5af01d4d6c054" "6ebb2401451dc6d01cd761eef8fe24812a57793c5ccc427b600893fa1d767b1d" "6b2c6e5bc1e89cf7d927d17f436626eac98a04fdab89e080f4e193f6d291c93d" "4cdea318a3efab7ff7c832daea05f6b2d5d0a18b9bfa79763b674e860ecbc6da" "00f09a2728377a37e9a24d631de94cc7440e0803e218474cac287061951c205c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+ '(delete-selection-mode t)
+ '(inhibit-startup-screen t)
+ '(initial-scratch-message nil)
+ '(package-selected-packages
+   (quote
+    (color-theme-sanityinc-solarized clojure-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode cljsbuild-mode ack)))
+ '(scroll-bar-mode nil)
+ '(tool-bar-mode nil))
 
 (when (equal system-type 'darwin)
   ;; Treat option as meta and command as super
@@ -20,56 +40,6 @@
 
 ;; backup files in separate directory
 (setq backup-directory-alist `(("." . "~/.emacs-saves")))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   (vector "#eaeaea" "#d54e53" "#b9ca4a" "#e7c547" "#7aa6da" "#c397d8" "#70c0b1" "#000000"))
- '(auto-save-default nil)
- '(backup-inhibited t t)
- '(clojure-defun-indents (quote (always-ident)))
- '(column-number-mode t)
- '(custom-safe-themes
-   (quote
-    ("6b2c6e5bc1e89cf7d927d17f436626eac98a04fdab89e080f4e193f6d291c93d" "4cdea318a3efab7ff7c832daea05f6b2d5d0a18b9bfa79763b674e860ecbc6da" "00f09a2728377a37e9a24d631de94cc7440e0803e218474cac287061951c205c" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
- '(delete-selection-mode t)
- '(hl-paren-colors
-   (quote
-    ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
- '(inhibit-startup-screen t)
- '(initial-scratch-message nil)
- '(package-selected-packages
-   (quote
-    (color-theme-sanityinc-solarized clojure-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode cljsbuild-mode ack)))
- '(scroll-bar-mode nil)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#d54e53")
-     (40 . "#e78c45")
-     (60 . "#e7c547")
-     (80 . "#b9ca4a")
-     (100 . "#70c0b1")
-     (120 . "#7aa6da")
-     (140 . "#c397d8")
-     (160 . "#d54e53")
-     (180 . "#e78c45")
-     (200 . "#e7c547")
-     (220 . "#b9ca4a")
-     (240 . "#70c0b1")
-     (260 . "#7aa6da")
-     (280 . "#c397d8")
-     (300 . "#d54e53")
-     (320 . "#e78c45")
-     (340 . "#e7c547")
-     (360 . "#b9ca4a"))))
- '(vc-annotate-very-old-color nil))
 
 (setq default-directory "/Users/wei/code")
 
@@ -143,23 +113,6 @@
 ;; evil nerd commenter
 (evilnc-default-hotkeys)
 
-;; Highlight-parentheses
-;; (require 'highlight-parentheses)
-;; (define-globalized-minor-mode global-highlight-parentheses-mode
-  ;; highlight-parentheses-mode
-  ;; (lambda ()
-    ;; (highlight-parentheses-mode t)))
-
-;; Classic Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("orange" "yellow" "greenyellow" "green" "springgreen" "cyan" "slateblue" "magenta" "purple"))))
-;; Eighties Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("#f2777a" "#f99157" "#ffcc66" "#99cc99" "#009999" "#99cccc" "#cc99cc"))))
-;; Night Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("#cc6666" "#de935f" "#f0c674" "#b5bd68" "#8abeb7" "#81a2be" "#b294bb"))))
-;; Bright Rainbow
-
-;; (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
-
 (defvar clojure--prettify-symbols-alist nil)
 
 (unless (package-installed-p 'clojure-mode)
@@ -176,11 +129,6 @@
 (require 'smart-tab)
 (global-smart-tab-mode 1)
 
-;; Relative line numbers
-;; (require 'linum-relative)
-;; (set-face-foreground 'linum-relative-current-face nil)
-;; (set-face-background 'linum-relative-current-face nil)
-
 ;; APPEARANCE
 
 ;; Set color-theme
@@ -192,15 +140,6 @@
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
 (setq-default truncate-lines t)
-
-;; Set parentheses color
-;; (defface esk-paren-face
-   ;; '((((class color) (background dark))
-      ;; (:foreground "grey40"))
-     ;; (((class color) (background light))
-      ;; (:foreground "grey55")))
-   ;; "Face used to dim parentheses."
-   ;; :group 'starter-kit-faces)
 
 ;; (font-lock-add-keywords 'clojure-mode '(("(\\|)" . 'esk-paren-face)))
 
@@ -385,3 +324,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(load-theme 'sanityinc-tomorrow-day t)
