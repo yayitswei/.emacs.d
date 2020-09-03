@@ -15,7 +15,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (color-theme-sanityinc-solarized clojure-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode cljsbuild-mode ack)))
+    (clojure-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode ack)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
