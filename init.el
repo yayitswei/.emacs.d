@@ -188,10 +188,6 @@
   (interactive)
   (sql-connect-preset 'pool-b))
 
-(defun shake-phone ()
-  (interactive)
-  (shell-command "adb shell input keyevent 82"))
-
 ; TODO: add to nrepl-interaction-mode-map
 ;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
 ;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
@@ -231,8 +227,6 @@
 ;; comment region
 (global-set-key (kbd "C-c ;") 'comment-region)
 
-(global-set-key (kbd "s-r") 'shake-phone)
-
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
   (interactive)
@@ -251,7 +245,6 @@
 ;; indents
 
 (setq js-indent-level 2)
-(setq typescript-indent-level 2)
 (setq css-indent-offset 2)
 (setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
@@ -261,48 +254,12 @@
 ;; (setq simplenote2-password nil)
 ;; (simplenote2-setup)
 
-;; (add-hook 'python-mode-hook
-      ;; (lambda ()
-        ;; (setq indent-tabs-mode t)
-        ;; (setq tab-width 4)
-        ;; (setq python-indent 4)))
-
 (add-hook 'python-mode-hook
       (lambda ()
         (setq indent-tabs-mode nil)
         (setq tab-width 2)))
 
 (put 'downcase-region 'disabled nil)
-
-
-;; typescript
-
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
-
-;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
-
-;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
-
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
 
 ;; use tabs in php mode
 (add-hook 'php-mode-hook 'my-php-mode-hook)
@@ -317,7 +274,7 @@
 ;; (with-eval-after-load 'evil-maps (define-key evil-insert-state-map (kbd "f1") 'evil-normal-state)) 
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
 
-(setq tramp-default-method "ssh")
+;; (setq tramp-default-method "ssh")
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
