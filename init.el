@@ -159,8 +159,8 @@
   (textmate-next-line))
 
 ;; SMARTPARENS (paredit replacement)
-(require 'smartparens-custom-config)
-(add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+;; (require 'smartparens-custom-config)
+;; (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
 
 ; SQLi
 
