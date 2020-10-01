@@ -31,8 +31,6 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
- '(ansi-color-names-vector
-   (vector "#eaeaea" "#d54e53" "#b9ca4a" "#e7c547" "#7aa6da" "#c397d8" "#70c0b1" "#000000"))
  '(auto-save-default nil)
  '(backup-inhibited t t)
  '(clojure-defun-indents (quote (always-ident)))
@@ -42,10 +40,6 @@
    (quote
     ("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(delete-selection-mode t)
- '(fci-rule-color "#424242")
- '(hl-paren-colors
-   (quote
-    ("#d54e53" "#e78c45" "#e7c547" "#b9ca4a" "#70c0b1" "#7aa6da" "#c397d8")))
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(package-selected-packages
@@ -56,29 +50,7 @@
     ((cider-refresh-after-fn . "integrant.repl/resume")
      (cider-refresh-before-fn . "integrant.repl/suspend"))))
  '(scroll-bar-mode nil)
- '(tool-bar-mode nil)
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#d54e53")
-     (40 . "#e78c45")
-     (60 . "#e7c547")
-     (80 . "#b9ca4a")
-     (100 . "#70c0b1")
-     (120 . "#7aa6da")
-     (140 . "#c397d8")
-     (160 . "#d54e53")
-     (180 . "#e78c45")
-     (200 . "#e7c547")
-     (220 . "#b9ca4a")
-     (240 . "#70c0b1")
-     (260 . "#7aa6da")
-     (280 . "#c397d8")
-     (300 . "#d54e53")
-     (320 . "#e78c45")
-     (340 . "#e7c547")
-     (360 . "#b9ca4a"))))
- '(vc-annotate-very-old-color nil))
+ '(tool-bar-mode nil))
 
 (setq default-directory "/Users/wei/code")
 
@@ -111,8 +83,8 @@
 
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/"))
 
 ; too slow
 ;(when (not package-archive-contents)
@@ -153,23 +125,6 @@
 ;; evil nerd commenter
 (evilnc-default-hotkeys)
 
-;; Highlight-parentheses
-;; (require 'highlight-parentheses)
-;; (define-globalized-minor-mode global-highlight-parentheses-mode
-  ;; highlight-parentheses-mode
-  ;; (lambda ()
-    ;; (highlight-parentheses-mode t)))
-
-;; Classic Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("orange" "yellow" "greenyellow" "green" "springgreen" "cyan" "slateblue" "magenta" "purple"))))
-;; Eighties Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("#f2777a" "#f99157" "#ffcc66" "#99cc99" "#009999" "#99cccc" "#cc99cc"))))
-;; Night Rainbow
-;; (custom-set-variables '(hl-paren-colors (quote ("#cc6666" "#de935f" "#f0c674" "#b5bd68" "#8abeb7" "#81a2be" "#b294bb"))))
-;; Bright Rainbow
-
-;; (add-hook 'clojure-mode-hook 'highlight-parentheses-mode)
-
 (defvar clojure--prettify-symbols-alist nil)
 
 (unless (package-installed-p 'clojure-mode)
@@ -208,11 +163,6 @@
      ))
 
 (setq color-theme-is-global t)
-;; (add-to-list 'load-path "~/.emacs.d/checkouts/emacs-color-theme-solarized")
-;; (require 'color-theme-solarized)
-;; (setq solarized-termcolors 256)
-;(color-theme-solarized-dark)
-;; (color-theme-solarized-light)
 
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
