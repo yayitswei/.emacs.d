@@ -12,9 +12,12 @@
   (global-set-key (kbd "s-c") 'kill-ring-save)
   (global-set-key (kbd "s-x") 'kill-region)
   (global-set-key (kbd "s-w") 'kill-this-buffer)
-  (global-set-key (kbd "s-k") 'kill-this-buffer)
+  (global-set-key (kbd "s-f") 'find-file)
+  (global-set-key (kbd "s-p") 'previous-buffer)
+  (global-set-key (kbd "s-n") 'next-buffer)
   (global-set-key (kbd "s-z") 'undo-tree-undo)
   (global-set-key (kbd "s-s") 'save-buffer)
+  (global-set-key (kbd "C-s") 'save-buffer)
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
 
@@ -44,7 +47,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
+    (evil-cleverparens fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
  '(safe-local-variable-values
    (quote
     ((cider-refresh-after-fn . "integrant.repl/resume")
@@ -133,6 +136,11 @@
 
 (require 'monroe)
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
+
+(add-hook 'clojure-mode-hook #'evil-cleverparens-mode)
+(add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
+(setq evil-move-beyond-eol t)
+(setq evil-move-cursor-back nil)
 
 (setenv "PATH" (concat (getenv "HOME") "/bin:" (getenv "PATH")))
 (setq exec-path (cons "~/bin" exec-path))
@@ -239,10 +247,6 @@
   (interactive)
   (sql-connect-preset 'pool-b))
 
-(defun shake-phone ()
-  (interactive)
-  (shell-command "adb shell input keyevent 82"))
-
 ; TODO: add to nrepl-interaction-mode-map
 ;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
 ;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
@@ -279,10 +283,14 @@
 (global-set-key (kbd "<s-up>")    'windmove-up)
 (global-set-key (kbd "<s-down>")  'windmove-down)
 
+(setq mac-pass-command-to-system nil)
+(global-set-key (kbd "s-l") 'windmove-right)
+(global-set-key (kbd "s-h") 'windmove-left)
+(global-set-key (kbd "s-j") 'windmove-down)
+(global-set-key (kbd "s-k") 'windmove-up)
+
 ;; comment region
 (global-set-key (kbd "C-c ;") 'comment-region)
-
-(global-set-key (kbd "s-r") 'shake-phone)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
