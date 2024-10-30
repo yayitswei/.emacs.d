@@ -8,3 +8,5 @@ ac-comphist.dat
 .emacs.desktop.lock
 request
 tramp
+*.swp
+network-security.data

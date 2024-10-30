@@ -21,7 +21,12 @@
   (global-set-key (kbd "s-Z") 'undo-tree-redo)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
 
-;; TODO: remap f1 to escape
+;; comment form
+(setq clojure-toplevel-inside-comment-form t)
+
+;(set-default-font "Monaco 28" nil t)
+(set-face-attribute 'default nil :font "Monaco 14" :height 140)
+
 ;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
 
 ;; backup files in separate directory
@@ -47,10 +52,14 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (evil-cleverparens fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
+    (gptel rust-mode clojure-mode monroe scala-mode solidity-mode evil-cleverparens fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack)))
  '(safe-local-variable-values
    (quote
-    ((cider-refresh-after-fn . "integrant.repl/resume")
+    ((cider-ns-refresh-after-fn . "development/go")
+     (cider-ns-refresh-before-fn . "development/stop")
+     (eval put-clojure-indent :require 0)
+     (clojure-indent-style . always-indent)
+     (cider-refresh-after-fn . "integrant.repl/resume")
      (cider-refresh-before-fn . "integrant.repl/suspend"))))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
@@ -102,7 +111,6 @@
 (require 'rwd-bell)
 ;; (setq visible-bell t)
 (setq ring-bell-function 'ignore)
-
 
 ;; PLUGINS
 
@@ -184,9 +192,6 @@
 (global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
 
 
-;; (set-face-attribute 'default nil :height 120)
-;; (set-cursor-color 'white)
-
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
 (setq-default truncate-lines t)
@@ -260,12 +265,25 @@
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
-(define-key global-map [f5]
-  (lambda ()  (interactive) (monroe "localhost:7888")))
-(define-key global-map [f6]
-  (lambda ()  (interactive) (monroe "localhost:7889")))
 (define-key global-map [f7]
-  (lambda ()  (interactive) (monroe "localhost:9000")))
+  (lambda ()  (interactive)
+    (monroe "localhost:9995")
+    (visual-line-mode)))
+(define-key global-map [f5]
+  (lambda ()  (interactive)
+    (monroe "localhost:7888")
+    (visual-line-mode)))
+
+(define-key global-map [f6]
+  (lambda ()  (interactive)
+    (visual-line-mode)
+    (insert "(shadow.cljs.devtools.api/repl :dev)")))
+
+;(define-key global-map [f6]
+;  (lambda ()  (interactive)
+;    (monroe "localhost:9000")
+;    (visual-line-mode)
+;    (insert "(shadow/repl :main)")))
 
 (define-key global-map (kbd "<f8> k")
   (lambda () (interactive)
@@ -307,12 +325,12 @@
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
 
-(custom-set-faces
+;(custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "#1d1f21" :foreground "#c5c8c6" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
+ ;'(default ((t (:inherit nil :stipple nil :background "#1d1f21" :foreground "#c5c8c6" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
 
 ;; indents
 
@@ -387,5 +405,12 @@
 
 
 ;; fennel
-;; (autoload 'fennel-mode "/Users/wei/.emacs.d/elpa/fennel-mode-20190927.4" nil t)
+;(autoload 'fennel-mode "/Users/wei/.emacs.d/elpa/fennel-mode-20190927.4" nil t)
+(autoload 'fennel-mode "/Users/wei/.emacs.d/checkouts/fennel-mode/fennel-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
