@@ -1,4 +1,69 @@
+(add-to-list 'load-path "~/.emacs.d/custom")
 
+;; bootstrap straight package manager
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+;; end bootstrap straight
+
+(straight-use-package
+ '(clojure-mode :type git
+                :host github
+                :repo "clojure-emacs/clojure-mode"))
+(require 'clojure-mode)
+
+(straight-use-package 'helm)
+
+(setq helm-split-window-in-side-p t)
+(setq helm-split-window-preferred-function 'split-window-below)
+
+(straight-use-package 'gptel)
+(setq
+ gptel-model 'claude-3-5-sonnet-20241022
+ gptel-backend (gptel-make-anthropic "Claude"
+                 :stream t :key (lambda ()
+                                  (string-trim
+                                   (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))))
+
+(straight-use-package
+ '(helm-ls-git :type git
+               :host github
+               :repo "emacs-helm/helm-ls-git"))
+(require 'helm-ls-git)
+
+;; (straight-use-package
+;;  '(rail :type git
+;;                :host github
+;;                :repo "Sasanidas/Rail"))
+
+;; (require 'rail)
+
+(straight-use-package
+ '(monroe :type git
+          :host github
+          :repo "sanel/monroe"
+          :commit "508f5ed0f88b0b5e01a37d456186ea437f44d93c" ;; note: this does NOT fix the version, i went to ~/.emacs.d/straight/repos/monroe and used git checkout directly. the right approach is to use a lockfile
+          ;; reason for using a previous version is that the newer monroe tries to be multi-repl, and breaks some functionality 
+          ))
+
+(require 'monroe)
+;(require 'monroe-fixes)
+(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
+
+
+;; mac specific settings
 (when (equal system-type 'darwin)
   ;; Treat option as meta and command as super
   (setq mac-option-key-is-meta t)
@@ -19,10 +84,6 @@
   (global-set-key (kbd "C-s") 'save-buffer)
   (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
 
-;; comment form
-(setq clojure-toplevel-inside-comment-form t)
-
-;(set-default-font "Monaco 28" nil t)
 (set-face-attribute 'default nil :font "Monaco 14" :height 140)
 
 ;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
@@ -48,7 +109,7 @@
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(package-selected-packages
-   '(evil gptel rust-mode clojure-mode monroe scala-mode solidity-mode evil-cleverparens fennel-mode lua-mode php-mode go-mode docker-tramp helm-ls-git helm-git-grep helm-ag helm yaml-mode with-editor web-mode tide textmate smartparens smart-tab slamhound simplenote2 s robe rainbow-delimiters queue paredit markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
+   '(evil-collection evil rust-mode scala-mode solidity-mode evil-cleverparens fennel-mode lua-mode php-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab slamhound simplenote2 s robe rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
  '(safe-local-variable-values
    '((cider-ns-refresh-after-fn . "development/go")
      (cider-ns-refresh-before-fn . "development/stop")
@@ -99,7 +160,6 @@
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 (add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
-(add-to-list 'load-path "~/.emacs.d/checkouts/custom")
 
 ;; Visual bell
 ;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
@@ -113,7 +173,16 @@
 ;; (global-linum-mode t)
 
 ;; Vim-mode (Evil-mode)
+(setq evil-want-keybinding nil)
+
 (require 'evil)
+
+;; use default undo
+(evil-set-undo-system 'undo-redo)
+
+;; evil mode everywhere
+(evil-collection-init)
+
 (require 'goto-last-change)
 ;(require 'evil-paredit)
 (evil-mode 1)
@@ -127,18 +196,14 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (global-set-key (kbd "C-u") 'scroll-down-command)
+(global-set-key [M-backspace] 'backward-kill-word)
+(define-key minibuffer-local-map (kbd "M-<backspace>") 'backward-kill-word)
 
 ;; evil nerd commenter
 (evilnc-default-hotkeys)
 
 (defvar clojure--prettify-symbols-alist nil)
-
-(unless (package-installed-p 'clojure-mode)
-  (package-refresh-contents)
-  (package-install 'clojure-mode))
-
-(require 'monroe)
-(add-hook 'clojure-mode-hook 'clojure-enable-monroe)
+(setq clojure-toplevel-inside-comment-form t) ;; comment form
 
 (add-hook 'clojure-mode-hook #'evil-cleverparens-mode)
 (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
@@ -213,42 +278,10 @@
   (previous-line)
   (textmate-next-line))
 
-;; SMARTPARENS (paredit replacement)
-(require 'smartparens-custom-config)
-(add-hook 'clojure-mode-hook 'smartparens-strict-mode)
-
-; SQLi
-
-(setq sql-connection-alist
-      '((pool-a
-         (sql-product 'postgres)
-         (sql-server "localhost")
-         (sql-user "wei")
-         (sql-database "sf_dev"))
-        (pool-b
-         (sql-product 'postgres)
-         (sql-server "r"))))
-
-(defun sql-connect-preset (name)
-  "Connect to a predefined SQL connection listed in `sql-connection-alist'"
-  (eval `(let ,(cdr (assoc name sql-connection-alist))
-           (flet ((sql-get-login (&rest what)))
-             (sql-product-interactive sql-product)))))
-
-(defun connect-pool-a ()
-  (interactive)
-  (sql-connect-preset 'pool-a))
-
-(defun connect-pool-b ()
-  (interactive)
-  (sql-connect-preset 'pool-b))
-
 ; TODO: add to nrepl-interaction-mode-map
 ;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
 ;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
 ;; (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
-
-(define-key global-map [f3] 'connect-pool-a)
 
 ;; open this config file
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
@@ -264,18 +297,10 @@
   (lambda ()  (interactive)
     (monroe "localhost:7888")
     (visual-line-mode)))
-
 (define-key global-map [f6]
   (lambda ()  (interactive)
     (visual-line-mode)
     (insert "(shadow.cljs.devtools.api/repl :dev)")))
-
-;(define-key global-map [f6]
-;  (lambda ()  (interactive)
-;    (monroe "localhost:9000")
-;    (visual-line-mode)
-;    (insert "(shadow/repl :main)")))
-
 (define-key global-map (kbd "<f8> k")
   (lambda () (interactive)
     (ignore-errors (kill-process "monroe"))))
@@ -316,13 +341,6 @@
                          (funcall interprogram-paste-function))))
     (when have-paste (push have-paste kill-ring))))
 
-;(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- ;'(default ((t (:inherit nil :stipple nil :background "#1d1f21" :foreground "#c5c8c6" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Monaco")))))
-
 ;; indents
 
 (setq js-indent-level 2)
@@ -348,7 +366,6 @@
         (setq tab-width 2)))
 
 (put 'downcase-region 'disabled nil)
-
 
 ;; typescript
 
@@ -395,13 +412,3 @@
 (setq tramp-default-method "ssh")
 
 
-;; fennel
-;(autoload 'fennel-mode "/Users/wei/.emacs.d/elpa/fennel-mode-20190927.4" nil t)
-(autoload 'fennel-mode "/Users/wei/.emacs.d/checkouts/fennel-mode/fennel-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
