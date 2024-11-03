@@ -1,3 +1,8 @@
+(setq byte-compile-warnings '(not cl-functions obsolete))
+(setq warning-suppress-types '((comp cl-functions) 
+                             (comp obsolete)
+                             (defvaralias)))
+
 (add-to-list 'load-path "~/.emacs.d/custom")
 
 ;; bootstrap straight package manager
@@ -43,13 +48,6 @@
                :repo "emacs-helm/helm-ls-git"))
 (require 'helm-ls-git)
 
-;; (straight-use-package
-;;  '(rail :type git
-;;                :host github
-;;                :repo "Sasanidas/Rail"))
-
-;; (require 'rail)
-
 (straight-use-package
  '(monroe :type git
           :host github
@@ -59,9 +57,33 @@
           ))
 
 (require 'monroe)
-;(require 'monroe-fixes)
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
+(straight-use-package
+ '(simplenote2 :type git
+                :host github
+                :repo "alpha22jp/simplenote2.el"))
+(require 'simplenote2)
+
+(setq evil-want-keybinding nil)
+
+(straight-use-package
+ '(evil :type git
+        :host github
+        :repo "emacs-evil/evil"))
+(require 'evil)
+
+(straight-use-package
+ '(evil-cleverparens :type git
+                :host github
+                :repo "emacs-evil/evil-cleverparens"))
+(require 'evil-cleverparens)
+
+(straight-use-package
+ '(evil-collection :type git
+                   :host github
+                   :repo "emacs-evil/evil-collection"))
+(require 'evil-collection)
 
 ;; mac specific settings
 (when (equal system-type 'darwin)
@@ -109,7 +131,7 @@
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(package-selected-packages
-   '(evil-collection evil rust-mode scala-mode solidity-mode evil-cleverparens fennel-mode lua-mode php-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab slamhound simplenote2 s robe rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jsx-mode jade-mode html-to-markdown highlight-parentheses haml-mode evil-nerd-commenter evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
+   '(rust-mode scala-mode solidity-mode fennel-mode lua-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab s rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jade-mode html-to-markdown highlight-parentheses haml-mode evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
  '(safe-local-variable-values
    '((cider-ns-refresh-after-fn . "development/go")
      (cider-ns-refresh-before-fn . "development/stop")
@@ -173,20 +195,15 @@
 ;; (global-linum-mode t)
 
 ;; Vim-mode (Evil-mode)
-(setq evil-want-keybinding nil)
-
-(require 'evil)
-
 ;; use default undo
 (evil-set-undo-system 'undo-redo)
 
 ;; evil mode everywhere
 (evil-collection-init)
-
-(require 'goto-last-change)
-;(require 'evil-paredit)
 (evil-mode 1)
 (setq evil-default-cursor t)
+(electric-pair-mode 1)
+
 ;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
@@ -199,8 +216,6 @@
 (global-set-key [M-backspace] 'backward-kill-word)
 (define-key minibuffer-local-map (kbd "M-<backspace>") 'backward-kill-word)
 
-;; evil nerd commenter
-(evilnc-default-hotkeys)
 
 (defvar clojure--prettify-symbols-alist nil)
 (setq clojure-toplevel-inside-comment-form t) ;; comment form
@@ -240,7 +255,6 @@
 
 (setq color-theme-is-global t)
 
-
 (defun toggle-night-color-theme ()
   "Switch to/from night color scheme."
   (interactive)
@@ -277,11 +291,6 @@
   (interactive)
   (previous-line)
   (textmate-next-line))
-
-; TODO: add to nrepl-interaction-mode-map
-;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
-;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
-;; (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 
 ;; open this config file
 (define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
@@ -349,16 +358,21 @@
 (setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
 
-;; (require 'simplenote2)
-;; (setq simplenote2-email "yayitswei@gmail.com")
-;; (setq simplenote2-password nil)
-;; (simplenote2-setup)
+(require 'simplenote2)
 
-;; (add-hook 'python-mode-hook
-      ;; (lambda ()
-        ;; (setq indent-tabs-mode t)
-        ;; (setq tab-width 4)
-        ;; (setq python-indent 4)))
+(setq simplenote2-email
+      (string-trim
+       (shell-command-to-string "security find-generic-password -s simplenote-email -w")))
+(setq simplenote2-password
+      (string-trim
+       (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
+(simplenote2-setup)
+
+;; TODO: add to nrepl-interaction-mode-map
+(define-key global-map (kbd "<f2> b") 'simplenote2-browse)
+(define-key global-map (kbd "<f2> l") 'simplenote2-list)
+(define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
+(define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 
 (add-hook 'python-mode-hook
       (lambda ()
@@ -395,16 +409,6 @@
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
-
-;; use tabs in php mode
-(add-hook 'php-mode-hook 'my-php-mode-hook)
-(defun my-php-mode-hook ()
-  (setq indent-tabs-mode t)
-  (let ((my-tab-width 4))
-    (setq tab-width my-tab-width)
-    (setq c-basic-indent my-tab-width)
-    (set (make-local-variable 'tab-stop-list)
-         (number-sequence my-tab-width 200 my-tab-width))))
 
 ;; (with-eval-after-load 'evil-maps (define-key evil-insert-state-map (kbd "f1") 'evil-normal-state)) 
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 

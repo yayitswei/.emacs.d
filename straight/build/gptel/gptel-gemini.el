@@ -1,1 +1,0 @@
-/Users/wei/.emacs.d/straight/repos/gptel/gptel-gemini.el
