@@ -3,6 +3,8 @@
                              (comp obsolete)
                              (defvaralias)))
 
+(require 'cl-lib)
+
 (add-to-list 'load-path "~/.emacs.d/custom")
 
 ;; bootstrap straight package manager
@@ -35,8 +37,36 @@
 (setq helm-split-window-preferred-function 'split-window-below)
 
 (straight-use-package 'gptel)
+
+ ;; (defvar my-gptel-claude
+ ;;   (gptel-make-anthropic "Claude"
+ ;;     :key (lambda ()
+ ;;            (string-trim
+ ;;             (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))
+ ;;     :stream t))
+
+;; (defvar my-gptel-gemini
+;;   (gptel-make-gemini "Gemini"
+;;     :key (lambda ()
+;;            (string-trim0
+;;             (shell-command-to-string "security find-generic-password -s gemini-api-key -w")))
+;;     :stream t))
+
+;; ;; Function to switch between backends
+;; (defun my-gptel-switch-backend (backend)
+;;   "Switch gptel backend to BACKEND."
+;;   (interactive
+;;    (list (completing-read 
+;;           "Select backend: " 
+;;           (mapcar #'car gptel--backend-alist))))
+;;   (setq gptel-backend backend)
+;;   (message "Switched to %s backend" backend))
+
+;; (setq gptel-model 'gemini-2.5-pro-exp-03-25
+;;       gptel-backend 'my-gptel-claude)
+
 (setq
- gptel-model 'claude-3-5-sonnet-20241022
+ gptel-model 'claude-3-7-sonnet-20250219 ;  "claude-3-opus-20240229" also available
  gptel-backend (gptel-make-anthropic "Claude"
                  :stream t :key (lambda ()
                                   (string-trim
@@ -59,6 +89,16 @@
 (require 'monroe)
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
+;; this adds a port name but unfortunately monroe doesn't work with it
+;; (defadvice monroe-connect (after monroe-rename-buffer-with-port activate)
+;;   "Rename the monroe buffer to include the port number."
+;;   (let* ((hp (split-string (monroe-strip-protocol host-and-port) ":"))
+;;          (port (string-to-number (monroe-valid-host-string (second hp) "7888")))
+;;          (buffer (get-buffer monroe-repl-buffer)))
+;;     (when buffer
+;;       (with-current-buffer buffer
+;;         (rename-buffer (format "*monroe:[%s]*" port) t)))))
+
 (straight-use-package
  '(simplenote2 :type git
                 :host github
@@ -78,6 +118,51 @@
                 :host github
                 :repo "emacs-evil/evil-cleverparens"))
 (require 'evil-cleverparens)
+
+(put 'markdown-code-block 'bounds-of-thing-at-point
+     (lambda ()
+       (let* ((start (save-excursion
+                      (if (and (looking-at "^```") 
+                              (looking-back "^" (line-beginning-position)))
+                          (point)
+                        (when (search-backward-regexp "^```" nil t)
+                          (point)))))
+              (end (when start  ; only search for end if we found start
+                    (save-excursion
+                      (goto-char start)
+                      (forward-line)
+                      (when (search-forward-regexp "^```$" nil t)
+                        (line-end-position))))))
+         (when (and start end)
+           (cons start end)))))
+
+(put 'markdown-code-block-content 'bounds-of-thing-at-point
+     (lambda ()
+       (let ((bounds (bounds-of-thing-at-point 'markdown-code-block)))
+         (when bounds
+           (save-excursion
+             (goto-char (car bounds))
+             (forward-line 1)
+             (cons (point)
+                   (progn
+                     (goto-char (cdr bounds))
+                     (forward-line -1)
+                     (line-end-position))))))))
+
+(evil-define-text-object evil-outer-markdown-code-block (count &optional beg end type)
+  "Select a markdown code block (including backticks)."
+  (let ((bounds (bounds-of-thing-at-point 'markdown-code-block)))
+    (when bounds
+      (evil-range (car bounds) (cdr bounds)))))
+
+(evil-define-text-object evil-inner-markdown-code-block (count &optional beg end type)
+  "Select inside a markdown code block (excluding backticks)."
+  (let ((bounds (bounds-of-thing-at-point 'markdown-code-block-content)))
+    (when bounds
+      (evil-range (car bounds) (cdr bounds)))))
+
+(define-key evil-outer-text-objects-map "c" 'evil-outer-markdown-code-block)
+(define-key evil-inner-text-objects-map "c" 'evil-inner-markdown-code-block)
 
 (straight-use-package
  '(evil-collection :type git
@@ -198,11 +283,45 @@
 ;; use default undo
 (evil-set-undo-system 'undo-redo)
 
-;; evil mode everywhere
-(evil-collection-init)
 (evil-mode 1)
+
+;; evil mode everywhere
+(setq evil-collection-mode-list
+      (remove 'gptel evil-collection-mode-list))
+(evil-collection-init)
+(add-hook 'gptel-context-mode-hook 'turn-off-evil-mode)
+
 (setq evil-default-cursor t)
 (electric-pair-mode 1)
+
+;; leader
+(evil-set-leader 'normal (kbd "SPC"))
+;; elisp eval
+(evil-define-key 'normal 'global (kbd "SPC er") 'eval-region)
+(evil-define-key 'visual 'global (kbd "SPC er") 'eval-region)
+(evil-define-key 'normal 'global (kbd "SPC eb") 'eval-buffer)
+
+;; evil gptel shortcuts
+(evil-global-set-key 'normal (kbd "C-.") 'gptel-send)
+(evil-global-set-key 'normal (kbd "M-.") 'gptel)
+(evil-global-set-key 'insert (kbd "C-.") 'gptel-send)
+(evil-global-set-key 'insert (kbd "M-.") 'gptel)
+
+;; Add current file to context
+(defun my-gptel-add-current-file ()
+  "Add current file to gptel conversation context"
+  (interactive)
+  (gptel-add-file (buffer-file-name)))
+
+(evil-define-key 'normal 'global (kbd "SPC ..") 'gptel)           ;; Start chat (alternative to C-.)
+(evil-define-key 'normal 'global (kbd "SPC .f") 'my-gptel-add-current-file)
+(evil-define-key 'normal 'global (kbd "SPC .t") 'my-gptel-switch-backend)
+(evil-define-key 'normal 'global (kbd "SPC .a") 'gptel-add)
+(evil-define-key 'normal 'global (kbd "SPC .s") 'gptel-send)     ;; Send region (alternative to M-.)
+(evil-define-key 'normal 'global (kbd "SPC .n") 'gptel-next)     ;; Next chat session
+(evil-define-key 'normal 'global (kbd "SPC .p") 'gptel-prev)     ;; Previous chat session 
+(evil-define-key 'normal 'global (kbd "SPC .k") 'gptel-abort)    ;; Kill/abort current request
+(evil-define-key 'normal 'global (kbd "SPC .m") 'gptel-menu)     ;; GPT settings menu
 
 ;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -213,9 +332,9 @@
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (global-set-key (kbd "C-u") 'scroll-down-command)
+
 (global-set-key [M-backspace] 'backward-kill-word)
 (define-key minibuffer-local-map (kbd "M-<backspace>") 'backward-kill-word)
-
 
 (defvar clojure--prettify-symbols-alist nil)
 (setq clojure-toplevel-inside-comment-form t) ;; comment form
@@ -298,7 +417,7 @@
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
 
-(define-key global-map [f7]
+(define-key global-map [f8]
   (lambda ()  (interactive)
     (monroe "localhost:9995")
     (visual-line-mode)))
@@ -306,13 +425,17 @@
   (lambda ()  (interactive)
     (monroe "localhost:7888")
     (visual-line-mode)))
-(define-key global-map [f6]
+(define-key global-map [f7]
   (lambda ()  (interactive)
     (visual-line-mode)
-    (insert "(shadow.cljs.devtools.api/repl :dev)")))
-(define-key global-map (kbd "<f8> k")
-  (lambda () (interactive)
-    (ignore-errors (kill-process "monroe"))))
+    (insert "(shadow.cljs.devtools.api/repl :app)")))
+(define-key global-map [f6]
+  (lambda ()  (interactive)
+    (monroe "localhost:7889")
+    (visual-line-mode)))
+;; (define-key global-map (kbd "<f8> k")
+;;   (lambda () (interactive)
+;;     (ignore-errors (kill-process "monroe"))))
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map [(super return)] 'textmate-next-line)
@@ -352,7 +475,8 @@
 
 ;; indents
 
-(setq js-indent-level 2)
+(setq js-indent-level 4)
+(setq js2-basic-offset 4)
 (setq typescript-indent-level 2)
 (setq css-indent-offset 2)
 (setq web-mode-markup-indent-offset 2)
@@ -367,12 +491,16 @@
       (string-trim
        (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
 (simplenote2-setup)
+(evil-define-key 'normal 'global (kbd "SPC sb") 'simplenote2-browse)
+(evil-define-key 'normal 'global (kbd "SPC sl") 'simplenote2-list)
+(evil-define-key 'normal 'global (kbd "SPC sn") 'simplenote2-create-note-from-buffer)
+(evil-define-key 'normal 'global (kbd "SPC ss") 'simplenote2-sync-notes)
 
 ;; TODO: add to nrepl-interaction-mode-map
-(define-key global-map (kbd "<f2> b") 'simplenote2-browse)
-(define-key global-map (kbd "<f2> l") 'simplenote2-list)
-(define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
-(define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
+;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
+;; (define-key global-map (kbd "<f2> l") 'simplenote2-list)
+;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
+;; (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 
 (add-hook 'python-mode-hook
       (lambda ()
@@ -414,5 +542,3 @@
 (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
 
 (setq tramp-default-method "ssh")
-
-
