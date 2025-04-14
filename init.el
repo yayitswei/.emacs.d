@@ -3,6 +3,9 @@
                              (comp obsolete)
                              (defvaralias)))
 
+(setq desktop-path '("~/code/emacs/desktop")) 
+(desktop-save-mode 1)
+
 (require 'cl-lib)
 
 (add-to-list 'load-path "~/.emacs.d/custom")
@@ -38,39 +41,67 @@
 
 (straight-use-package 'gptel)
 
- ;; (defvar my-gptel-claude
- ;;   (gptel-make-anthropic "Claude"
- ;;     :key (lambda ()
- ;;            (string-trim
- ;;             (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))
- ;;     :stream t))
+(defvar my-gptel-claude
+  (gptel-make-anthropic "Claude"
+    :key (lambda ()
+           (string-trim
+            (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))
+    :stream t))
 
-;; (defvar my-gptel-gemini
-;;   (gptel-make-gemini "Gemini"
-;;     :key (lambda ()
-;;            (string-trim0
-;;             (shell-command-to-string "security find-generic-password -s gemini-api-key -w")))
-;;     :stream t))
+(defvar my-gptel-gemini
+  (gptel-make-gemini "Gemini"
+    :key (lambda ()
+           (string-trim
+            (shell-command-to-string "security find-generic-password -s gemini-api-key -w")))
+    :stream t))
 
-;; ;; Function to switch between backends
-;; (defun my-gptel-switch-backend (backend)
-;;   "Switch gptel backend to BACKEND."
-;;   (interactive
-;;    (list (completing-read 
-;;           "Select backend: " 
-;;           (mapcar #'car gptel--backend-alist))))
-;;   (setq gptel-backend backend)
-;;   (message "Switched to %s backend" backend))
 
-;; (setq gptel-model 'gemini-2.5-pro-exp-03-25
-;;       gptel-backend 'my-gptel-claude)
+;; Define model preferences as an association list (backend name -> preferred model)
+(defvar my-gptel-model-preferences
+  '(("Claude" . claude-3-7-sonnet-20250219)
+    ("Gemini" . gemini-2.5-pro-exp-03-25))
+  "Association list mapping backend names to preferred models.")
 
-(setq
- gptel-model 'claude-3-7-sonnet-20250219 ;  "claude-3-opus-20240229" also available
- gptel-backend (gptel-make-anthropic "Claude"
-                 :stream t :key (lambda ()
-                                  (string-trim
-                                   (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))))
+;; Function to switch between backends
+(defun my-gptel-switch-backend ()
+  "Switch gptel backend interactively."
+  (interactive)
+  (let* ((backend-list (list my-gptel-claude my-gptel-gemini))
+         (backend-names (mapcar #'gptel-backend-name backend-list))
+         (selected-name (completing-read 
+                         "Select backend: " 
+                         backend-names
+                         nil t))
+         (selected-backend (cl-find-if (lambda (backend)
+                                         (string= (gptel-backend-name backend) selected-name))
+                                       backend-list))
+         (preferred-model (cdr (assoc selected-name my-gptel-model-preferences))))
+    (when selected-backend
+      (setq gptel-backend selected-backend)
+      ;; Set the preferred model for this backend
+      (when preferred-model
+        (setq gptel-model preferred-model))
+      (message "Switched to %s backend with model %s" 
+               selected-name 
+               (symbol-name gptel-model)))))
+
+;; Set initial default backend and model
+(let* ((default-backend-name "Gemini")
+       (default-backend my-gptel-gemini)
+       (default-model (cdr (assoc default-backend-name my-gptel-model-preferences))))
+  (setq gptel-backend default-backend
+        gptel-model default-model))
+
+;; TODO: remove if above works
+;(setq gptel-model 'gemini-2.5-pro-exp-03-25
+;      gptel-backend my-gptel-gemini)
+
+;; Load your custom prompt from a file and set it as the default
+(with-temp-buffer
+  (insert-file-contents "/Users/wei/code/ohol-windsurf/.windsurfrules")
+  (let ((custom-prompt (buffer-string)))
+    ;; Update the 'default entry in gptel-directives
+    (setf (alist-get 'default gptel-directives) custom-prompt)))
 
 (straight-use-package
  '(helm-ls-git :type git
@@ -118,6 +149,8 @@
                 :host github
                 :repo "emacs-evil/evil-cleverparens"))
 (require 'evil-cleverparens)
+
+(straight-use-package 'markdown-mode)
 
 (put 'markdown-code-block 'bounds-of-thing-at-point
      (lambda ()
@@ -229,8 +262,6 @@
 
 (setq default-directory "/Users/wei/code")
 
-(desktop-save-mode 0)
-
 (global-auto-revert-mode 0)
 
 ;; Fix the PATH variable
@@ -289,7 +320,9 @@
 (setq evil-collection-mode-list
       (remove 'gptel evil-collection-mode-list))
 (evil-collection-init)
-(add-hook 'gptel-context-mode-hook 'turn-off-evil-mode)
+;(add-hook 'gptel-context-buffer-mode-hook 'turn-off-evil-mode)
+(evil-set-initial-state 'gptel-context-buffer-mode 'emacs)
+;(add-to-list 'evil-emacs-state-modes 'gptel-context-mode)
 
 (setq evil-default-cursor t)
 (electric-pair-mode 1)
@@ -384,7 +417,7 @@
       (fset 'color-theme-snapshot (color-theme-make-snapshot)))
     (color-theme-solarized-dark)))
 (global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
-
+(evil-define-key 'normal 'global (kbd "SPC at") 'toggle-night-color-theme)
 
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
@@ -416,6 +449,7 @@
 
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
+(evil-define-key 'normal 'global (kbd "SPC al") 'visual-line-mode)
 
 (define-key global-map [f8]
   (lambda ()  (interactive)
@@ -457,6 +491,7 @@
 
 ;; comment region
 (global-set-key (kbd "C-c ;") 'comment-region)
+(global-set-key (kbd "C-c :") 'uncomment-region)
 
 ; Switch to prev buffer
 (defun switch-to-previous-buffer ()
@@ -475,7 +510,7 @@
 
 ;; indents
 
-(setq js-indent-level 4)
+(setq js-indent-level 2)
 (setq js2-basic-offset 4)
 (setq typescript-indent-level 2)
 (setq css-indent-offset 2)
