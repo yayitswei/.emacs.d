@@ -3,8 +3,8 @@
                              (comp obsolete)
                              (defvaralias)))
 
-(setq desktop-path '("~/code/emacs/desktop")) 
-(desktop-save-mode 1)
+;(setq desktop-path '("~/code/emacs/desktop")) 
+;(desktop-save-mode 1)
 
 (require 'cl-lib)
 
@@ -95,13 +95,6 @@
 ;; TODO: remove if above works
 ;(setq gptel-model 'gemini-2.5-pro-exp-03-25
 ;      gptel-backend my-gptel-gemini)
-
-;; Load your custom prompt from a file and set it as the default
-(with-temp-buffer
-  (insert-file-contents "/Users/wei/code/ohol-windsurf/.windsurfrules")
-  (let ((custom-prompt (buffer-string)))
-    ;; Update the 'default entry in gptel-directives
-    (setf (alist-get 'default gptel-directives) custom-prompt)))
 
 (straight-use-package
  '(helm-ls-git :type git
@@ -209,22 +202,22 @@
   (setq mac-option-key-is-meta t)
   (setq mac-command-key-is-meta nil)
   (setq mac-command-modifier 'super)
-  (setq mac-option-modifier 'meta)
+  (setq mac-option-modifier 'meta))
 
-  ;; Keybindings
-  (global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
-  (global-set-key (kbd "s-v") 'yank)
-  (global-set-key (kbd "s-c") 'kill-ring-save)
-  (global-set-key (kbd "s-x") 'kill-region)
-  (global-set-key (kbd "s-w") 'kill-this-buffer)
-  (global-set-key (kbd "s-f") 'find-file)
-  (global-set-key (kbd "s-p") 'previous-buffer)
-  (global-set-key (kbd "s-n") 'next-buffer)
-  (global-set-key (kbd "s-s") 'save-buffer)
-  (global-set-key (kbd "C-s") 'save-buffer)
-  (global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen))
+;; Keybindings
+(global-set-key (kbd "C-s-f") 'spacemacs/toggle-frame-fullscreen)
+(global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
+(global-set-key (kbd "s-v") 'yank)
+(global-set-key (kbd "s-c") 'kill-ring-save)
+(global-set-key (kbd "s-x") 'kill-region)
+(global-set-key (kbd "s-w") 'kill-this-buffer)
+(global-set-key (kbd "s-f") 'find-file)
+(global-set-key (kbd "s-p") 'previous-buffer)
+(global-set-key (kbd "s-n") 'next-buffer)
+(global-set-key (kbd "s-s") 'save-buffer)
+(global-set-key (kbd "C-s") 'save-buffer)
 
-(set-face-attribute 'default nil :font "Monaco 14" :height 140)
+;;(set-face-attribute 'default nil :font "Monaco 10" :height 140)
 
 ;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
 
@@ -249,7 +242,7 @@
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(package-selected-packages
-   '(rust-mode scala-mode solidity-mode fennel-mode lua-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab s rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jade-mode html-to-markdown highlight-parentheses haml-mode evil-leader csv-mode color-theme-sanityinc-tomorrow color-theme clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
+   '(rust-mode scala-mode solidity-mode fennel-mode lua-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab s rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jade-mode html-to-markdown highlight-parentheses haml-mode evil-leader csv-mode color-theme-sanityinc-tomorrow  clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
  '(safe-local-variable-values
    '((cider-ns-refresh-after-fn . "development/go")
      (cider-ns-refresh-before-fn . "development/stop")
@@ -260,7 +253,7 @@
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
-(setq default-directory "/Users/wei/code")
+(setq default-directory "/home/wei/code")
 
 (global-auto-revert-mode 0)
 
@@ -392,7 +385,6 @@
 ;; APPEARANCE
 
 ;; Set color-theme
-(require 'color-theme)
 (require 'color-theme-tomorrow)
 (eval-after-load "color-theme"
   '(progn
