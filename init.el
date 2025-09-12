@@ -113,6 +113,32 @@
 (require 'monroe)
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
+;; Fix monroe-get-clojure-ns to work with both clojure-mode and clojurec-mode
+(defun monroe-get-clojure-ns-fixed ()
+  "Get the clojure namespace for both .clj and .cljc files."
+  (and (or (eq major-mode 'clojure-mode) (eq major-mode 'clojurec-mode))
+       (fboundp 'clojure-find-ns)
+       (funcall 'clojure-find-ns)))
+
+;; Fix monroe-eval-namespace to work with clojure-mode and clojurec-mode
+(defun monroe-eval-namespace-fixed ()
+  "Evaluate the namespace form in the current buffer."
+  (interactive)
+  (when (monroe-get-clojure-ns-fixed)
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^(ns\\s-" nil t)
+        (goto-char (match-beginning 0))
+        (let ((end (save-excursion (end-of-defun) (point))))
+          ;; Send ns form without namespace context so it can switch namespaces
+          (monroe-input-sender
+           (get-buffer-process (monroe-repl-buffer))
+           (buffer-substring-no-properties (point) end)
+           nil))))))  ; nil namespace so the ns form can execute properly
+
+;; Override the original function
+(advice-add 'monroe-eval-namespace :override #'monroe-eval-namespace-fixed)
+
 ;; this adds a port name but unfortunately monroe doesn't work with it
 ;; (defadvice monroe-connect (after monroe-rename-buffer-with-port activate)
 ;;   "Rename the monroe buffer to include the port number."
