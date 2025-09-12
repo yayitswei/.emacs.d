@@ -236,7 +236,7 @@
 (global-set-key (kbd "s-v") 'yank)
 (global-set-key (kbd "s-c") 'kill-ring-save)
 (global-set-key (kbd "s-x") 'kill-region)
-(global-set-key (kbd "s-w") 'kill-this-buffer)
+(global-set-key (kbd "s-w") (lambda () (interactive) (kill-buffer (current-buffer))))
 (global-set-key (kbd "s-f") 'find-file)
 (global-set-key (kbd "s-p") 'previous-buffer)
 (global-set-key (kbd "s-n") 'next-buffer)
