@@ -219,6 +219,10 @@
 
 ;;(set-face-attribute 'default nil :font "Monaco 10" :height 140)
 
+;; Set default font and size (adjust the height value for size)
+;; Height 160 = 16pt, 140 = 14pt, 120 = 12pt, 180 = 18pt, etc.
+(set-face-attribute 'default nil :height 140)
+
 ;; (define-key key-translation-map (kbd "f1") (kbd "ESC"))
 
 ;; backup files in separate directory
