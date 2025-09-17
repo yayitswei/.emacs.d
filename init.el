@@ -1,3 +1,5 @@
+;; TODO: use rail https://github.com/Sasanidas/Rail
+
 (setq byte-compile-warnings '(not cl-functions obsolete))
 (setq warning-suppress-types '((comp cl-functions) 
                              (comp obsolete)
@@ -10,47 +12,45 @@
 
 (add-to-list 'load-path "~/.emacs.d/custom")
 
-;; bootstrap straight package manager
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-;; end bootstrap straight
+(setq ring-bell-function 'ignore)
 
-(straight-use-package
- '(clojure-mode :type git
-                :host github
-                :repo "clojure-emacs/clojure-mode"))
-(require 'clojure-mode)
+;; Initialize package.el first
+;(require 'package)
+;(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/") t)
+;(package-initialize)
 
-(straight-use-package 'helm)
+;; Set up use-package (built-in in Emacs 29+)
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+;; Enable package-vc support (built-in in Emacs 30+)
+(when (>= emacs-major-version 30)
+  (require 'package-vc))
+
+(use-package clojure-mode
+  :vc (:url "https://github.com/clojure-emacs/clojure-mode.git")
+  :demand t)
+
+(use-package helm
+  :ensure t)
 
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-preferred-function 'split-window-below)
 
-(straight-use-package '(helm-ls-git :type git :host github :repo "emacs-helm/helm-ls-git"))
-(require 'helm-ls-git)
+(use-package helm-ls-git
+  :vc (:url "https://github.com/emacs-helm/helm-ls-git.git")
+  :after helm
+  :demand t)
 
-(straight-use-package
- '(monroe :type git
-          :host github
-          :repo "sanel/monroe"
-          :commit "508f5ed0f88b0b5e01a37d456186ea437f44d93c" ;; note: this does NOT fix the version, i went to ~/.emacs.d/straight/repos/monroe and used git checkout directly. the right approach is to use a lockfile
-          ;; reason for using a previous version is that the newer monroe tries to be multi-repl, and breaks some functionality 
-          ))
+(use-package monroe
+  :vc (:url "https://github.com/sanel/monroe.git" :rev "508f5ed0f88b0b5e01a37d456186ea437f44d93c")
+  ;; reason for using a previous version is that the newer monroe tries to be multi-repl, and breaks some functionality
+  :demand t)
 
-(require 'monroe)
+;; monroe is loaded via use-package
+
+;; monroe is loaded via use-package
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
 
 ;; Fix monroe-get-clojure-ns to work with both clojure-mode and clojurec-mode
@@ -106,78 +106,74 @@
 ;;       (with-current-buffer buffer
 ;;         (rename-buffer (format "*monroe:[%s]*" port) t)))))
 
-(straight-use-package
- '(simplenote2 :type git
-                :host github
-                :repo "alpha22jp/simplenote2.el"))
-(require 'simplenote2)
+(use-package simplenote2
+  :vc (:url "https://github.com/alpha22jp/simplenote2.el.git")
+  :demand t
+  :config
+  (setq simplenote2-email
+        (string-trim
+         (shell-command-to-string "security find-generic-password -s simplenote-email -w")))
+  (setq simplenote2-password
+        (string-trim
+         (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
+  (simplenote2-setup)
+  (with-eval-after-load 'evil
+    (evil-define-key 'normal 'global (kbd "<leader>sb") 'simplenote2-browse)
+    (evil-define-key 'normal 'global (kbd "<leader>sl") 'simplenote2-list)
+    (evil-define-key 'normal 'global (kbd "<leader>sn") 'simplenote2-create-note-from-buffer)
+    (evil-define-key 'normal 'global (kbd "<leader>ss") 'simplenote2-sync-notes)))
 
-(setq evil-want-keybinding nil)
+(use-package evil
+  :vc (:url "https://github.com/emacs-evil/evil.git")
+  :demand t
+  :init
+  (setq evil-want-keybinding nil)
+  :config
+  ;; use default undo
+  (evil-set-undo-system 'undo-redo)
+  (evil-mode 1)
+  (setq evil-default-cursor t)
 
-(straight-use-package
- '(evil :type git
-        :host github
-        :repo "emacs-evil/evil"))
-(require 'evil)
+  ;; Set up key bindings after evil is fully loaded
+  (with-eval-after-load 'evil
+    ;; leader key setup
+    (evil-set-leader 'normal (kbd "SPC"))
+    (evil-set-leader 'visual (kbd "SPC"))
 
-(straight-use-package
- '(evil-cleverparens :type git
-                :host github
-                :repo "emacs-evil/evil-cleverparens"))
-(require 'evil-cleverparens)
+    ;; esc quits
+    (define-key evil-normal-state-map [escape] 'keyboard-quit)
+    (define-key evil-visual-state-map [escape] 'keyboard-quit)
+    (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-(straight-use-package 'markdown-mode)
+    ;; elisp eval - use leader key
+    (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
+    (evil-define-key 'visual 'global (kbd "<leader>er") 'eval-region)
+    (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
 
-(put 'markdown-code-block 'bounds-of-thing-at-point
-     (lambda ()
-       (let* ((start (save-excursion
-                      (if (and (looking-at "^```") 
-                              (looking-back "^" (line-beginning-position)))
-                          (point)
-                        (when (search-backward-regexp "^```" nil t)
-                          (point)))))
-              (end (when start  ; only search for end if we found start
-                    (save-excursion
-                      (goto-char start)
-                      (forward-line)
-                      (when (search-forward-regexp "^```$" nil t)
-                        (line-end-position))))))
-         (when (and start end)
-           (cons start end)))))
+(use-package evil-cleverparens
+  :vc (:url "https://github.com/emacs-evil/evil-cleverparens.git")
+  :after evil
+  :demand t)
 
-(put 'markdown-code-block-content 'bounds-of-thing-at-point
-     (lambda ()
-       (let ((bounds (bounds-of-thing-at-point 'markdown-code-block)))
-         (when bounds
-           (save-excursion
-             (goto-char (car bounds))
-             (forward-line 1)
-             (cons (point)
-                   (progn
-                     (goto-char (cdr bounds))
-                     (forward-line -1)
-                     (line-end-position))))))))
+(use-package markdown-mode
+  :ensure t)
 
-(evil-define-text-object evil-outer-markdown-code-block (count &optional beg end type)
-  "Select a markdown code block (including backticks)."
-  (let ((bounds (bounds-of-thing-at-point 'markdown-code-block)))
-    (when bounds
-      (evil-range (car bounds) (cdr bounds)))))
+(use-package evil-collection
+  :vc (:url "https://github.com/emacs-evil/evil-collection.git")
+  :after evil
+  :demand t
+  :config
+  (evil-collection-init))
 
-(evil-define-text-object evil-inner-markdown-code-block (count &optional beg end type)
-  "Select inside a markdown code block (excluding backticks)."
-  (let ((bounds (bounds-of-thing-at-point 'markdown-code-block-content)))
-    (when bounds
-      (evil-range (car bounds) (cdr bounds)))))
-
-(define-key evil-outer-text-objects-map "c" 'evil-outer-markdown-code-block)
-(define-key evil-inner-text-objects-map "c" 'evil-inner-markdown-code-block)
-
-(straight-use-package
- '(evil-collection :type git
-                   :host github
-                   :repo "emacs-evil/evil-collection"))
-(require 'evil-collection)
+(use-package color-theme-sanityinc-tomorrow
+  :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow.git")
+  :demand t
+  :config
+  (load-theme 'sanityinc-tomorrow-night t))
 
 ;; mac specific settings
 (when (equal system-type 'darwin)
@@ -211,36 +207,6 @@
 ;; backup files in separate directory
 (setq backup-directory-alist `(("." . "~/.emacs-saves")))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default bold shadow italic underline bold bold-italic bold])
- '(auto-save-default nil)
- '(backup-inhibited t t)
- '(clojure-defun-indents '(always-ident))
- '(column-number-mode t)
- '(custom-enabled-themes '(sanityinc-tomorrow-night))
- '(custom-safe-themes
-   '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default))
- '(delete-selection-mode t)
- '(inhibit-startup-screen t)
- '(initial-scratch-message nil)
- '(package-selected-packages
-   '(rust-mode scala-mode solidity-mode fennel-mode lua-mode go-mode helm-git-grep helm-ag yaml-mode with-editor web-mode tide textmate smart-tab s rainbow-delimiters queue markdown-mode magit list-processes+ linum-relative jump jade-mode html-to-markdown highlight-parentheses haml-mode evil-leader csv-mode color-theme-sanityinc-tomorrow  clojurescript-mode clojure-mode-extra-font-locking cljsbuild-mode base16-theme ack))
- '(safe-local-variable-values
-   '((cider-ns-refresh-after-fn . "development/go")
-     (cider-ns-refresh-before-fn . "development/stop")
-     (eval put-clojure-indent :require 0)
-     (clojure-indent-style . always-indent)
-     (cider-refresh-after-fn . "integrant.repl/resume")
-     (cider-refresh-before-fn . "integrant.repl/suspend")))
- '(menu-bar-mode nil)
- '(scroll-bar-mode nil)
- '(tool-bar-mode nil))
-
 ;; TODO: move to local.el
 ;; (setq default-directory "/home/wei/code")
 
@@ -266,58 +232,27 @@
 (global-set-key (kbd "s-b") 'helm-buffers-list)
 (global-set-key (kbd "s-F") 'helm-git-grep)
 
-;; Package.el customization
-(package-initialize)
-
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/"))
+;; Package archives already configured at the top of file
 
 ; too slow
 ;(when (not package-archive-contents)
 ;  (package-refresh-contents))
 
 (add-to-list 'load-path "~/.emacs.d/custom")
-(add-to-list 'load-path "~/.emacs.d/custom/tomorrow-theme")
 
-;; Visual bell
-;; http://emacsblog.org/2007/02/06/quick-tip-visible-bell/
-(require 'rwd-bell)
-;; (setq visible-bell t)
-(setq ring-bell-function 'ignore)
+
+
+
+
+
 
 ;; PLUGINS
 
 ;; Line numbers
 ;; (global-linum-mode t)
 
-;; Vim-mode (Evil-mode)
-;; use default undo
-(evil-set-undo-system 'undo-redo)
-
-(evil-mode 1)
-
-(evil-collection-init)
-
-(setq evil-default-cursor t)
+;; Evil configuration is now in use-package declarations above
 (electric-pair-mode 1)
-
-;; leader
-(evil-set-leader 'normal (kbd "SPC"))
-;; elisp eval
-(evil-define-key 'normal 'global (kbd "SPC er") 'eval-region)
-(evil-define-key 'visual 'global (kbd "SPC er") 'eval-region)
-(evil-define-key 'normal 'global (kbd "SPC eb") 'eval-buffer)
-
-;; esc quits
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (global-set-key (kbd "C-u") 'scroll-down-command)
 
 (global-set-key [M-backspace] 'backward-kill-word)
@@ -335,8 +270,8 @@
 (setq exec-path (cons "~/bin" exec-path))
 
 ;; Super Tab
-(require 'smart-tab)
-(global-smart-tab-mode 1)
+;(require 'smart-tab)
+;(global-smart-tab-mode 1)
 
 ;; Relative line numbers
 ;; (require 'linum-relative)
@@ -345,51 +280,19 @@
 
 ;; APPEARANCE
 
-;; Set color-theme
-(require 'color-theme-tomorrow)
-(eval-after-load "color-theme"
-  '(progn
-     (color-theme-initialize)
-     ;; (color-theme-tomorrow-night)
-     (color-theme-sanityinc-tomorrow-night)
-     ;; (color-theme-sanityinc-tomorrow-bright)
-     ;; (color-theme-sanityinc-tomorrow-day)
-     ;; (color-theme-sanityinc-tomorrow-blue)
-     ;; (color-theme-sanityinc-tomorrow-eighties)
-     ))
+;; Remove UI elements for cleaner look
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
+;; Color theme is now loaded via use-package declaration above
+;; Old color-theme configuration removed in favor of use-package
 
 (setq color-theme-is-global t)
-
-(defun toggle-night-color-theme ()
-  "Switch to/from night color scheme."
-  (interactive)
-  (if (eq (frame-parameter (next-frame) 'background-mode) 'dark)
-      (color-theme-snapshot) ; restore default (light) colors
-    ;; create the snapshot if necessary
-    (when (not (commandp 'color-theme-snapshot))
-      (fset 'color-theme-snapshot (color-theme-make-snapshot)))
-    (color-theme-solarized-dark)))
-(global-set-key (kbd "<f9> n") 'toggle-night-color-theme)
-(evil-define-key 'normal 'global (kbd "SPC at") 'toggle-night-color-theme)
 
 (setq-default indent-tabs-mode nil)
 (setq tab-width 2)
 (setq-default truncate-lines t)
-
-;; Set parentheses color
-;; (defface esk-paren-face
-   ;; '((((class color) (background dark))
-      ;; (:foreground "grey40"))
-     ;; (((class color) (background light))
-      ;; (:foreground "grey55")))
-   ;; "Face used to dim parentheses."
-   ;; :group 'starter-kit-faces)
-
-;; (font-lock-add-keywords 'clojure-mode '(("(\\|)" . 'esk-paren-face)))
-
-;; WHITESPACES
-;; (require 'whitespace)
-;; (add-hook 'after-save-hook 'whitespace-cleanup)
 
 ;; INDENT
 (defun prev-line-new ()
@@ -402,7 +305,8 @@
 
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
-(evil-define-key 'normal 'global (kbd "SPC al") 'visual-line-mode)
+(with-eval-after-load 'evil
+  (evil-define-key 'normal 'global (kbd "<leader>al") 'visual-line-mode))
 
 (define-key global-map [f8]
   (lambda ()  (interactive)
@@ -465,30 +369,8 @@
 
 (setq js-indent-level 2)
 (setq js2-basic-offset 4)
-(setq typescript-indent-level 2)
 (setq css-indent-offset 2)
-(setq web-mode-markup-indent-offset 2)
 (put 'upcase-region 'disabled nil)
-
-(require 'simplenote2)
-
-(setq simplenote2-email
-      (string-trim
-       (shell-command-to-string "security find-generic-password -s simplenote-email -w")))
-(setq simplenote2-password
-      (string-trim
-       (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
-(simplenote2-setup)
-(evil-define-key 'normal 'global (kbd "SPC sb") 'simplenote2-browse)
-(evil-define-key 'normal 'global (kbd "SPC sl") 'simplenote2-list)
-(evil-define-key 'normal 'global (kbd "SPC sn") 'simplenote2-create-note-from-buffer)
-(evil-define-key 'normal 'global (kbd "SPC ss") 'simplenote2-sync-notes)
-
-;; TODO: add to nrepl-interaction-mode-map
-;; (define-key global-map (kbd "<f2> b") 'simplenote2-browse)
-;; (define-key global-map (kbd "<f2> l") 'simplenote2-list)
-;; (define-key global-map (kbd "<f2> n") 'simplenote2-create-note-from-buffer)
-;; (define-key global-map (kbd "<f2> s") 'simplenote2-sync-notes)
 
 (add-hook 'python-mode-hook
       (lambda ()
@@ -497,36 +379,40 @@
 
 (put 'downcase-region 'disabled nil)
 
-;; typescript
-
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
-
 ;; aligns annotation to the right hand side
 (setq company-tooltip-align-annotations t)
 
 ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
 
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
-
-;; (with-eval-after-load 'evil-maps (define-key evil-insert-state-map (kbd "f1") 'evil-normal-state)) 
-(define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state) 
+(with-eval-after-load 'evil
+  (define-key evil-insert-state-map (kbd "<f1>") 'evil-normal-state)) 
 
 (setq tramp-default-method "ssh")
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((color-theme-sanityinc-tomorrow :url
+                                     "https://github.com/purcell/color-theme-sanityinc-tomorrow.git")
+     (evil-collection :url
+                      "https://github.com/emacs-evil/evil-collection.git")
+     (evil-cleverparens :url
+                        "https://github.com/emacs-evil/evil-cleverparens.git")
+     (evil :url "https://github.com/emacs-evil/evil.git")
+     (simplenote2 :url
+                  "https://github.com/alpha22jp/simplenote2.el.git")
+     (monroe :url "https://github.com/sanel/monroe.git")
+     (helm-ls-git :url "https://github.com/emacs-helm/helm-ls-git.git")
+     (clojure-mode :url
+                   "https://github.com/clojure-emacs/clojure-mode.git"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
