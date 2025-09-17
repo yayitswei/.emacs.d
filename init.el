@@ -39,67 +39,7 @@
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-preferred-function 'split-window-below)
 
-(straight-use-package 'gptel)
-
-(defvar my-gptel-claude
-  (gptel-make-anthropic "Claude"
-    :key (lambda ()
-           (string-trim
-            (shell-command-to-string "security find-generic-password -s anthropic-api-key -w")))
-    :stream t))
-
-(defvar my-gptel-gemini
-  (gptel-make-gemini "Gemini"
-    :key (lambda ()
-           (string-trim
-            (shell-command-to-string "security find-generic-password -s gemini-api-key -w")))
-    :stream t))
-
-
-;; Define model preferences as an association list (backend name -> preferred model)
-(defvar my-gptel-model-preferences
-  '(("Claude" . claude-3-7-sonnet-20250219)
-    ("Gemini" . gemini-2.5-pro-exp-03-25))
-  "Association list mapping backend names to preferred models.")
-
-;; Function to switch between backends
-(defun my-gptel-switch-backend ()
-  "Switch gptel backend interactively."
-  (interactive)
-  (let* ((backend-list (list my-gptel-claude my-gptel-gemini))
-         (backend-names (mapcar #'gptel-backend-name backend-list))
-         (selected-name (completing-read 
-                         "Select backend: " 
-                         backend-names
-                         nil t))
-         (selected-backend (cl-find-if (lambda (backend)
-                                         (string= (gptel-backend-name backend) selected-name))
-                                       backend-list))
-         (preferred-model (cdr (assoc selected-name my-gptel-model-preferences))))
-    (when selected-backend
-      (setq gptel-backend selected-backend)
-      ;; Set the preferred model for this backend
-      (when preferred-model
-        (setq gptel-model preferred-model))
-      (message "Switched to %s backend with model %s" 
-               selected-name 
-               (symbol-name gptel-model)))))
-
-;; Set initial default backend and model
-(let* ((default-backend-name "Gemini")
-       (default-backend my-gptel-gemini)
-       (default-model (cdr (assoc default-backend-name my-gptel-model-preferences))))
-  (setq gptel-backend default-backend
-        gptel-model default-model))
-
-;; TODO: remove if above works
-;(setq gptel-model 'gemini-2.5-pro-exp-03-25
-;      gptel-backend my-gptel-gemini)
-
-(straight-use-package
- '(helm-ls-git :type git
-               :host github
-               :repo "emacs-helm/helm-ls-git"))
+(straight-use-package '(helm-ls-git :type git :host github :repo "emacs-helm/helm-ls-git"))
 (require 'helm-ls-git)
 
 (straight-use-package
@@ -260,7 +200,7 @@
 (global-set-key (kbd "s-s") 'save-buffer)
 (global-set-key (kbd "C-s") 'save-buffer)
 
-;;(set-face-attribute 'default nil :font "Monaco 10" :height 140)
+(set-face-attribute 'default nil :font "Monaco 10" :height 140)
 
 ;; Set default font and size (adjust the height value for size)
 ;; Height 160 = 16pt, 140 = 14pt, 120 = 12pt, 180 = 18pt, etc.
@@ -301,7 +241,8 @@
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
-(setq default-directory "/home/wei/code")
+;; TODO: move to local.el
+;; (setq default-directory "/home/wei/code")
 
 (global-auto-revert-mode 0)
 
@@ -357,13 +298,7 @@
 
 (evil-mode 1)
 
-;; evil mode everywhere
-(setq evil-collection-mode-list
-      (remove 'gptel evil-collection-mode-list))
 (evil-collection-init)
-;(add-hook 'gptel-context-buffer-mode-hook 'turn-off-evil-mode)
-(evil-set-initial-state 'gptel-context-buffer-mode 'emacs)
-;(add-to-list 'evil-emacs-state-modes 'gptel-context-mode)
 
 (setq evil-default-cursor t)
 (electric-pair-mode 1)
@@ -374,28 +309,6 @@
 (evil-define-key 'normal 'global (kbd "SPC er") 'eval-region)
 (evil-define-key 'visual 'global (kbd "SPC er") 'eval-region)
 (evil-define-key 'normal 'global (kbd "SPC eb") 'eval-buffer)
-
-;; evil gptel shortcuts
-(evil-global-set-key 'normal (kbd "C-.") 'gptel-send)
-(evil-global-set-key 'normal (kbd "M-.") 'gptel)
-(evil-global-set-key 'insert (kbd "C-.") 'gptel-send)
-(evil-global-set-key 'insert (kbd "M-.") 'gptel)
-
-;; Add current file to context
-(defun my-gptel-add-current-file ()
-  "Add current file to gptel conversation context"
-  (interactive)
-  (gptel-add-file (buffer-file-name)))
-
-(evil-define-key 'normal 'global (kbd "SPC ..") 'gptel)           ;; Start chat (alternative to C-.)
-(evil-define-key 'normal 'global (kbd "SPC .f") 'my-gptel-add-current-file)
-(evil-define-key 'normal 'global (kbd "SPC .t") 'my-gptel-switch-backend)
-(evil-define-key 'normal 'global (kbd "SPC .a") 'gptel-add)
-(evil-define-key 'normal 'global (kbd "SPC .s") 'gptel-send)     ;; Send region (alternative to M-.)
-(evil-define-key 'normal 'global (kbd "SPC .n") 'gptel-next)     ;; Next chat session
-(evil-define-key 'normal 'global (kbd "SPC .p") 'gptel-prev)     ;; Previous chat session 
-(evil-define-key 'normal 'global (kbd "SPC .k") 'gptel-abort)    ;; Kill/abort current request
-(evil-define-key 'normal 'global (kbd "SPC .m") 'gptel-menu)     ;; GPT settings menu
 
 ;; esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
