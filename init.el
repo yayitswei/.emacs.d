@@ -1,4 +1,5 @@
 ;; TODO: use rail https://github.com/Sasanidas/Rail
+;; TODO: use visual-wrap-prefix-mode
 
 (setq byte-compile-warnings '(not cl-functions obsolete))
 (setq warning-suppress-types '((comp cl-functions) 
@@ -43,12 +44,15 @@
   :after helm
   :demand t)
 
+(use-package helm-git-grep
+  :vc (:url "https://github.com/yasuyk/helm-git-grep.git")
+  :after helm
+  :demand t)
+
 (use-package monroe
   :vc (:url "https://github.com/sanel/monroe.git" :rev "508f5ed0f88b0b5e01a37d456186ea437f44d93c")
   ;; reason for using a previous version is that the newer monroe tries to be multi-repl, and breaks some functionality
   :demand t)
-
-;; monroe is loaded via use-package
 
 ;; monroe is loaded via use-package
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
@@ -272,11 +276,6 @@
 ;; Super Tab
 ;(require 'smart-tab)
 ;(global-smart-tab-mode 1)
-
-;; Relative line numbers
-;; (require 'linum-relative)
-;; (set-face-foreground 'linum-relative-current-face nil)
-;; (set-face-background 'linum-relative-current-face nil)
 
 ;; APPEARANCE
 
