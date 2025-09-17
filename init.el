@@ -139,6 +139,23 @@
 ;; Override the original function
 (advice-add 'monroe-eval-namespace :override #'monroe-eval-namespace-fixed)
 
+;; Fix monroe-connection to handle remote connections properly
+(defun monroe-connection-fixed ()
+  "Returns the monroe connection, checking all possible process names."
+  (or 
+   ;; Try the standard local connection format
+   (get-process (concat "monroe/" (monroe-locate-running-nrepl-host)))
+   ;; Try extracting from current buffer name
+   (when (string-match "\\*monroe: \\(.+\\)\\*" (buffer-name))
+     (get-process (concat "monroe/" (match-string 1 (buffer-name)))))
+   ;; Try finding any monroe process
+   (car (seq-filter (lambda (p) 
+                      (string-prefix-p "monroe/" (process-name p)))
+                    (process-list)))))
+
+;; Override the original monroe-connection function
+(advice-add 'monroe-connection :override #'monroe-connection-fixed)
+
 ;; this adds a port name but unfortunately monroe doesn't work with it
 ;; (defadvice monroe-connect (after monroe-rename-buffer-with-port activate)
 ;;   "Rename the monroe buffer to include the port number."
@@ -280,6 +297,7 @@
      (clojure-indent-style . always-indent)
      (cider-refresh-after-fn . "integrant.repl/resume")
      (cider-refresh-before-fn . "integrant.repl/suspend")))
+ '(menu-bar-mode nil)
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
