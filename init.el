@@ -42,7 +42,14 @@
 (use-package helm-ls-git
   :vc (:url "https://github.com/emacs-helm/helm-ls-git.git")
   :after helm
-  :demand t)
+  :demand t
+  :config
+  ;; Disable git status and branches in helm-ls-git
+  (setq helm-ls-git-show-abs-or-relative 'relative)
+  (setq helm-ls-git-status-command nil)  ; Disable git status
+  (customize-set-variable 'helm-ls-git-default-sources
+                          '(helm-source-ls-git-buffers
+                            helm-source-ls-git)))
 
 (use-package helm-git-grep
   :vc (:url "https://github.com/yasuyk/helm-git-grep.git")
@@ -154,6 +161,7 @@
     (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
     ;; elisp eval - use leader key
+    (evil-define-key 'normal 'global (kbd "<leader>ei") (lambda () (interactive) (find-file user-init-file)))
     (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'visual 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
@@ -165,13 +173,6 @@
 
 (use-package markdown-mode
   :ensure t)
-
-(use-package evil-collection
-  :vc (:url "https://github.com/emacs-evil/evil-collection.git")
-  :after evil
-  :demand t
-  :config
-  (evil-collection-init))
 
 (use-package color-theme-sanityinc-tomorrow
   :vc (:url "https://github.com/purcell/color-theme-sanityinc-tomorrow.git")
@@ -299,8 +300,6 @@
   (previous-line)
   (textmate-next-line))
 
-;; open this config file
-(define-key global-map [f12] (lambda () (interactive) (find-file user-init-file)))
 
 ;; toggle line wrap
 (define-key global-map (kbd "<f9> l") 'visual-line-mode)
@@ -398,8 +397,6 @@
  '(package-vc-selected-packages
    '((color-theme-sanityinc-tomorrow :url
                                      "https://github.com/purcell/color-theme-sanityinc-tomorrow.git")
-     (evil-collection :url
-                      "https://github.com/emacs-evil/evil-collection.git")
      (evil-cleverparens :url
                         "https://github.com/emacs-evil/evil-cleverparens.git")
      (evil :url "https://github.com/emacs-evil/evil.git")
