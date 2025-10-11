@@ -29,6 +29,12 @@
 (when (>= emacs-major-version 30)
   (require 'package-vc))
 
+(use-package claude-code-ide
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
+  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
+  :config
+  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
+
 (use-package clojure-mode
   :vc (:url "https://github.com/clojure-emacs/clojure-mode.git")
   :demand t)
@@ -244,7 +250,7 @@
   (set-exec-path-from-shell-PATH)
   (global-unset-key "\C-z"))
 
-(global-set-key (kbd "s-t") 'helm-ls-git-ls)
+(global-set-key (kbd "s-t") 'helm-ls-git)
 (global-set-key (kbd "s-b") 'helm-buffers-list)
 (global-set-key (kbd "s-F") 'helm-git-grep)
 
