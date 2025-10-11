@@ -34,7 +34,10 @@
   :demand t)
 
 (use-package helm
-  :ensure t)
+  :ensure t
+  :config
+  ;; Make ESC quit helm sessions
+  (define-key helm-map (kbd "<escape>") 'helm-keyboard-quit))
 
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-preferred-function 'split-window-below)
