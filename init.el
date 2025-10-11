@@ -43,7 +43,9 @@
   :ensure t
   :config
   ;; Make ESC quit helm sessions
-  (define-key helm-map (kbd "<escape>") 'helm-keyboard-quit))
+  (define-key helm-map (kbd "<escape>") 'helm-keyboard-quit)
+  ;; Fix for helm-git-grep issue #52 - disable mouse support
+  (setq helm-allow-mouse nil))
 
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-preferred-function 'split-window-below)
@@ -63,7 +65,10 @@
 (use-package helm-git-grep
   :vc (:url "https://github.com/yasuyk/helm-git-grep.git")
   :after helm
-  :demand t)
+  :demand t
+  :init
+  ;; Load compile package before helm-git-grep for define-compilation-mode
+  (require 'compile))
 
 (use-package monroe
   :vc (:url "https://github.com/sanel/monroe.git" :rev "508f5ed0f88b0b5e01a37d456186ea437f44d93c")
