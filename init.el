@@ -157,11 +157,19 @@
     ;; esc quits
     (define-key evil-normal-state-map [escape] 'keyboard-quit)
     (define-key evil-visual-state-map [escape] 'keyboard-quit)
-    (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-    (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-    (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-    (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-    (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+    (define-key minibuffer-local-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-ns-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-completion-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-must-match-map [escape] 'abort-recursive-edit)
+    (define-key minibuffer-local-isearch-map [escape] 'abort-recursive-edit)
+    ;; Make ESC quit from evil insert state in minibuffer, or go to normal state elsewhere
+    (defun my-esc-quit-or-normal-state ()
+      "Quit minibuffer if in minibuffer, otherwise go to normal state."
+      (interactive)
+      (if (minibufferp)
+          (abort-recursive-edit)
+        (evil-normal-state)))
+    (define-key evil-insert-state-map [escape] 'my-esc-quit-or-normal-state)
 
     ;; elisp eval - use leader key
     (evil-define-key 'normal 'global (kbd "<leader>ei") (lambda () (interactive) (find-file user-init-file)))
