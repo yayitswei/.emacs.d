@@ -1,6 +1,10 @@
 ;; TODO: use rail https://github.com/Sasanidas/Rail
 ;; TODO: use visual-wrap-prefix-mode
 
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
 (setq byte-compile-warnings '(not cl-functions obsolete))
 (setq warning-suppress-types '((comp cl-functions) 
                              (comp obsolete)
@@ -37,7 +41,13 @@
 
 (use-package clojure-mode
   :vc (:url "https://github.com/clojure-emacs/clojure-mode.git")
-  :demand t)
+  :demand t
+  ;; TODO: two-space indent? https://tonsky.me/blog/clojurefmt/ don't really like it
+  ;;:config
+  ;;(setq clojure-indent-style 'always-indent
+  ;;      clojure-indent-keyword-style 'always-indent
+  ;;      clojure-enable-indent-specs nil)
+  )
 
 (use-package helm
   :ensure t
@@ -73,7 +83,26 @@
 (use-package monroe
   :vc (:url "https://github.com/sanel/monroe.git" :rev "508f5ed0f88b0b5e01a37d456186ea437f44d93c")
   ;; reason for using a previous version is that the newer monroe tries to be multi-repl, and breaks some functionality
-  :demand t)
+  :demand t
+  :config
+  ;; monroe repl keybindings
+  (with-eval-after-load 'evil
+    (evil-define-key 'normal 'global (kbd "<leader>ra")
+      (lambda () (interactive)
+        (monroe "localhost:7888")
+        (visual-line-mode)))
+    (evil-define-key 'normal 'global (kbd "<leader>rf")
+      (lambda () (interactive)
+        (visual-line-mode)
+        (insert "(shadow.cljs.devtools.api/repl :dev)")))
+    (evil-define-key 'normal 'global (kbd "<leader>rr")
+      (lambda () (interactive)
+        (monroe "sdr-prod:7888")
+        (visual-line-mode)))
+    (evil-define-key 'normal 'global (kbd "<leader>rb")
+      (lambda () (interactive)
+        (monroe "localhost:7889")
+        (visual-line-mode)))))
 
 ;; monroe is loaded via use-package
 (add-hook 'clojure-mode-hook 'clojure-enable-monroe)
@@ -186,25 +215,7 @@
     (evil-define-key 'normal 'global (kbd "<leader>ei") (lambda () (interactive) (find-file user-init-file)))
     (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'visual 'global (kbd "<leader>er") 'eval-region)
-    (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)
-
-    ;; monroe repl - use leader key
-    (evil-define-key 'normal 'global (kbd "<leader>ra")
-      (lambda () (interactive)
-        (monroe "localhost:7888")
-        (visual-line-mode)))
-    (evil-define-key 'normal 'global (kbd "<leader>rf")
-      (lambda () (interactive)
-        (visual-line-mode)
-        (insert "(shadow.cljs.devtools.api/repl :dev)")))
-    (evil-define-key 'normal 'global (kbd "<leader>rr")
-      (lambda () (interactive)
-        (monroe "sdr-prod:7888")
-        (visual-line-mode)))
-    (evil-define-key 'normal 'global (kbd "<leader>rb")
-      (lambda () (interactive)
-        (monroe "localhost:7889")
-        (visual-line-mode)))))
+    (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
 
 (use-package evil-cleverparens
   :vc (:url "https://github.com/emacs-evil/evil-cleverparens.git")
@@ -321,9 +332,6 @@
 ;; APPEARANCE
 
 ;; Remove UI elements for cleaner look
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
 
 ;; Color theme is now loaded via use-package declaration above
 ;; Old color-theme configuration removed in favor of use-package
@@ -341,9 +349,25 @@
   (textmate-next-line))
 
 
+;; Window layouts
+(defun my-column-layout (n)
+  "Create N equal vertical splits."
+  (interactive "nNumber of columns: ")
+  (delete-other-windows)
+  (dotimes (_ (1- n))
+    (split-window-right))
+  (balance-windows))
+
+;; Start with three column layout
+(add-hook 'emacs-startup-hook (lambda () (my-column-layout 3)))
+
 ;; toggle line wrap
 (with-eval-after-load 'evil
-  (evil-define-key 'normal 'global (kbd "<leader>al") 'visual-line-mode))
+  (evil-define-key 'normal 'global (kbd "<leader>al") 'visual-line-mode)
+  (evil-define-key 'normal 'global (kbd "<leader>e2") (lambda () (interactive) (my-column-layout 2)))
+  (evil-define-key 'normal 'global (kbd "<leader>e3") (lambda () (interactive) (my-column-layout 3)))
+  (evil-define-key 'normal 'global (kbd "<leader>e4") (lambda () (interactive) (my-column-layout 4)))
+  (evil-define-key 'normal 'global (kbd "<leader>e5") (lambda () (interactive) (my-column-layout 5))))
 
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
