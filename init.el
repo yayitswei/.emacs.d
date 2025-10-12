@@ -186,7 +186,25 @@
     (evil-define-key 'normal 'global (kbd "<leader>ei") (lambda () (interactive) (find-file user-init-file)))
     (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'visual 'global (kbd "<leader>er") 'eval-region)
-    (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
+    (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)
+
+    ;; monroe repl - use leader key
+    (evil-define-key 'normal 'global (kbd "<leader>ra")
+      (lambda () (interactive)
+        (monroe "localhost:7888")
+        (visual-line-mode)))
+    (evil-define-key 'normal 'global (kbd "<leader>rf")
+      (lambda () (interactive)
+        (visual-line-mode)
+        (insert "(shadow.cljs.devtools.api/repl :dev)")))
+    (evil-define-key 'normal 'global (kbd "<leader>rr")
+      (lambda () (interactive)
+        (monroe "sdr-prod:7888")
+        (visual-line-mode)))
+    (evil-define-key 'normal 'global (kbd "<leader>rb")
+      (lambda () (interactive)
+        (monroe "localhost:7889")
+        (visual-line-mode)))))
 
 (use-package evil-cleverparens
   :vc (:url "https://github.com/emacs-evil/evil-cleverparens.git")
@@ -324,29 +342,9 @@
 
 
 ;; toggle line wrap
-(define-key global-map (kbd "<f9> l") 'visual-line-mode)
 (with-eval-after-load 'evil
   (evil-define-key 'normal 'global (kbd "<leader>al") 'visual-line-mode))
 
-(define-key global-map [f8]
-  (lambda ()  (interactive)
-    (monroe "localhost:9995")
-    (visual-line-mode)))
-(define-key global-map [f5]
-  (lambda ()  (interactive)
-    (monroe "localhost:7888")
-    (visual-line-mode)))
-(define-key global-map [f7]
-  (lambda ()  (interactive)
-    (visual-line-mode)
-    (insert "(shadow.cljs.devtools.api/repl :app)")))
-(define-key global-map [f6]
-  (lambda ()  (interactive)
-    (monroe "localhost:7889")
-    (visual-line-mode)))
-;; (define-key global-map (kbd "<f8> k")
-;;   (lambda () (interactive)
-;;     (ignore-errors (kill-process "monroe"))))
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (define-key global-map [(super return)] 'textmate-next-line)
