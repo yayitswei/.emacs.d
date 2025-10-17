@@ -213,8 +213,8 @@
 
     ;; elisp eval - use leader key
     (evil-define-key 'normal 'global (kbd "<leader>ei") (lambda () (interactive) (find-file user-init-file)))
+    (evil-define-key 'normal 'global (kbd "<leader>eg") (lambda () (interactive) (find-file "/Users/wei/Library/Application Support/com.mitchellh.ghostty/config")))
     (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
-    (evil-define-key 'visual 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
 
 (use-package evil-cleverparens
