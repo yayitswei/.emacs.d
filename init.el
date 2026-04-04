@@ -33,12 +33,6 @@
 (when (>= emacs-major-version 30)
   (require 'package-vc))
 
-(use-package claude-code-ide
-  :vc (:url "https://github.com/manzaltu/claude-code-ide.el" :rev :newest)
-  :bind ("C-c C-'" . claude-code-ide-menu) ; Set your favorite keybinding
-  :config
-  (claude-code-ide-emacs-tools-setup)) ; Optionally enable Emacs MCP tools
-
 (use-package clojure-mode
   :vc (:url "https://github.com/clojure-emacs/clojure-mode.git")
   :demand t
@@ -439,16 +433,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((color-theme-sanityinc-tomorrow :url
-                                     "https://github.com/purcell/color-theme-sanityinc-tomorrow.git")
-     (evil-cleverparens :url
-                        "https://github.com/emacs-evil/evil-cleverparens.git")
-     (evil :url "https://github.com/emacs-evil/evil.git")
-     (simplenote2 :url
-                  "https://github.com/alpha22jp/simplenote2.el.git")
-     (monroe :url "https://github.com/sanel/monroe.git")
-     (helm-ls-git :url "https://github.com/emacs-helm/helm-ls-git.git")
-     (clojure-mode :url
+   '((clojure-mode :url
                    "https://github.com/clojure-emacs/clojure-mode.git"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
