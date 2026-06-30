@@ -154,22 +154,22 @@
 ;;       (with-current-buffer buffer
 ;;         (rename-buffer (format "*monroe:[%s]*" port) t)))))
 
-(use-package simplenote2
-  :vc (:url "https://github.com/alpha22jp/simplenote2.el.git")
-  :demand t
-  :config
-  (setq simplenote2-email
-        (string-trim
-         (shell-command-to-string "security find-generic-password -s simplenote-email -w")))
-  (setq simplenote2-password
-        (string-trim
-         (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
-  (simplenote2-setup)
-  (with-eval-after-load 'evil
-    (evil-define-key 'normal 'global (kbd "<leader>sb") 'simplenote2-browse)
-    (evil-define-key 'normal 'global (kbd "<leader>sl") 'simplenote2-list)
-    (evil-define-key 'normal 'global (kbd "<leader>sn") 'simplenote2-create-note-from-buffer)
-    (evil-define-key 'normal 'global (kbd "<leader>ss") 'simplenote2-sync-notes)))
+;; (use-package simplenote2
+;;   :vc (:url "https://github.com/alpha22jp/simplenote2.el.git" :rev "2e56d352cc7ce56d9b1514137ed2e199b72076bb")
+;;   :demand t
+;;   :config
+;;   (setq simplenote2-email
+;;         (string-trim
+;;          (shell-command-to-string "security find-generic-password -s simplenote-email -w")))
+;;   (setq simplenote2-password
+;;         (string-trim
+;;          (shell-command-to-string "security find-generic-password -s simplenote-password -w")))
+;;   (simplenote2-setup)
+;;   (with-eval-after-load 'evil
+;;     (evil-define-key 'normal 'global (kbd "<leader>sb") 'simplenote2-browse)
+;;     (evil-define-key 'normal 'global (kbd "<leader>sl") 'simplenote2-list)
+;;     (evil-define-key 'normal 'global (kbd "<leader>sn") 'simplenote2-create-note-from-buffer)
+;;     (evil-define-key 'normal 'global (kbd "<leader>ss") 'simplenote2-sync-notes)))
 
 (use-package evil
   :vc (:url "https://github.com/emacs-evil/evil.git")
@@ -211,10 +211,26 @@
     (evil-define-key 'normal 'global (kbd "<leader>er") 'eval-region)
     (evil-define-key 'normal 'global (kbd "<leader>eb") 'eval-buffer)))
 
+;; evil-cleverparens dependencies. These must be installed/activated before
+;; evil-cleverparens, otherwise package-vc fails to activate it and prompts
+;; "Overwrite previous checkout for package `evil-cleverparens'?" on every boot.
+;; paxedit/drag-stuff are declared deps that package-vc didn't resolve; dash is
+;; required by the source but not declared in its package metadata.
+(use-package dash
+  :vc (:url "https://github.com/magnars/dash.el.git")
+  :demand t)
+(use-package paxedit
+  :vc (:url "https://github.com/promethial/paxedit.git")
+  :demand t)
+(use-package drag-stuff
+  :vc (:url "https://github.com/rejeep/drag-stuff.el.git")
+  :demand t)
+
 (use-package evil-cleverparens
   :vc (:url "https://github.com/emacs-evil/evil-cleverparens.git")
   :after evil
-  :demand t)
+  ;; :demand t
+  )
 
 (use-package markdown-mode
   :ensure t)
@@ -357,7 +373,7 @@
 
 ;; toggle line wrap
 (with-eval-after-load 'evil
-  (evil-define-key 'normal 'global (kbd "<leader>al") 'visual-line-mode)
+  (evil-define-key 'normal 'global (kbd "<leader>el") 'visual-line-mode)
   (evil-define-key 'normal 'global (kbd "<leader>e2") (lambda () (interactive) (my-column-layout 2)))
   (evil-define-key 'normal 'global (kbd "<leader>e3") (lambda () (interactive) (my-column-layout 3)))
   (evil-define-key 'normal 'global (kbd "<leader>e4") (lambda () (interactive) (my-column-layout 4)))
